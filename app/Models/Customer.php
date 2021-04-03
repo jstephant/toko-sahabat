@@ -19,4 +19,9 @@ class Customer extends Model
     {
         return $this->belongsTo(Users::class, 'created_by');
     }
+
+    public function getCreatedAtAttribute($date)
+    {
+        return date('j F Y H:i', strtotime($date));
+    }
 }

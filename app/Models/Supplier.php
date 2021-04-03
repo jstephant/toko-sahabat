@@ -14,4 +14,19 @@ class Supplier extends Model
     {
         return $this->hasMany(Purchase::class, 'supplier_id', 'id');
     }
+
+    public function created_user()
+    {
+        return $this->belongsTo(Users::class, 'created_by');
+    }
+
+    public function updated_user()
+    {
+        return $this->belongsTo(Users::class, 'updated_by');
+    }
+
+    public function getCreatedAtAttribute($date)
+    {
+        return date('j F Y H:i', strtotime($date));
+    }
 }

@@ -5,6 +5,9 @@ namespace App\Services\Category;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Services\Category\ICategory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class SCategory implements ICategory
 {
@@ -103,9 +106,9 @@ class SCategory implements ICategory
         return $this->category->where('is_active', 1)->get();
     }
 
-    public function list($keyword, $start, $length, $order)
+    public function listCategory($keyword, $start, $length, $order)
     {
-        $category = $this->category->with('category');
+        $category = $this->category;
 
         if($keyword)
         {
@@ -149,5 +152,10 @@ class SCategory implements ICategory
         }
 
         return $data;
+    }
+
+    public function checkData($field, $keyword)
+    {
+        return $this->category->where($field, $keyword)->first();
     }
 }

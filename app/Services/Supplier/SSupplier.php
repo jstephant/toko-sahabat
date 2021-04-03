@@ -102,7 +102,7 @@ class SSupplier implements ISupplier
         return $this->supplier->wherw('is_active', 1)->where('name', $name)->get();
     }
 
-    public function list($keyword, $start, $length, $order)
+    public function listSupplier($keyword, $start, $length, $order)
     {
         $suppliers = $this->supplier->with(['created_user', 'updated_user']);
 

@@ -7,5 +7,6 @@ use App\Services\IDefault;
 interface ISatuan extends IDefault
 {
     public function getActive();
-    public function list($keyword, $start, $length, $order);
+    public function listSatuan($keyword, $start, $length, $order);
+    public function findData($field, $keyword);
 }

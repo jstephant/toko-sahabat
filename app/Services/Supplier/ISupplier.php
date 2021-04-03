@@ -8,5 +8,5 @@ interface ISupplier extends IDefault
 {
     public function getActive();
     public function getActiveByName($name);
-    public function list($keyword, $start, $length, $order);
+    public function listSupplier($keyword, $start, $length, $order);
 }

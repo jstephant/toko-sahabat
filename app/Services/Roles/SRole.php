@@ -97,9 +97,9 @@ class SRole implements IRole
         return $this->roles->where('is_active', 1)->get();
     }
 
-    public function list($keyword, $start, $length, $order)
+    public function listRole($keyword, $start, $length, $order)
     {
-        $roles = $this->roles;
+        $roles = $this->roles->where('restricted', 0);
 
         if($keyword)
         {
@@ -121,5 +121,10 @@ class SRole implements IRole
         ];
 
         return $data;
+    }
+
+    public function findData($field, $keyword)
+    {
+        return $this->roles->where($field, $keyword)->first();
     }
 }

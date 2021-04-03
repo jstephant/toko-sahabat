@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubCategory extends Model
 {
-    protected $table = 'product_sub_category';
+    protected $table = 'sub_category';
     protected $primaryKey = 'id';
     protected $fillable = ['name', 'category_id', 'is_active'];
     public $timestamps = false;

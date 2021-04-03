@@ -7,6 +7,8 @@ use App\Services\Category\SCategory;
 use App\Services\Customer\ICustomer;
 use App\Services\Customer\SCustomer;
 use App\Services\IGlobal;
+use App\Services\Product\IProduct;
+use App\Services\Product\SProduct;
 use App\Services\Roles\IRole;
 use App\Services\Roles\SRole;
 use App\Services\Satuan\ISatuan;
@@ -47,5 +49,6 @@ class TokoSahabatProvider extends ServiceProvider
         $this->app->bind(ISatuan::class, SSatuan::class);
         $this->app->bind(ISupplier::class, SSupplier::class);
         $this->app->bind(ICustomer::class. SCustomer::class);
+        $this->app->bind(IProduct::class. SProduct::class);
     }
 }

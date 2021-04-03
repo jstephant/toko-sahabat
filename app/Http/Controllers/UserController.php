@@ -8,7 +8,6 @@ use App\Services\SGlobal;
 use App\Services\User\SUser;
 use Illuminate\Http\Request;
 use UxWeb\SweetAlert\SweetAlert;
-use Validator;
 
 class UserController extends Controller
 {
@@ -30,8 +29,8 @@ class UserController extends Controller
     public function index()
     {
         $data = array(
-            'title'       => 'User',
-            'active_menu' => 'User'
+            'title'     => 'User',
+            'edit_mode' => 0
         );
 
         return $this->sGlobal->view('user.index', $data);
@@ -52,6 +51,7 @@ class UserController extends Controller
         $data = array(
             'title'       => 'Create User',
             'active_menu' => 'Create User',
+            'edit_mode'   => 1,
             'roles'       => $roles
         );
 
@@ -60,6 +60,8 @@ class UserController extends Controller
 
     public function doCreate(CreateUserRequest $request)
     {
+        $validated = $request->validated();
+
         $name = $request->name;
         $username = $request->username;
         $email = $request->email;
@@ -76,31 +78,71 @@ class UserController extends Controller
         if(!$created['status'])
         {
             SweetAlert::error('Error', $created['message']);
-            return redirect()->back();
+            return redirect()->back()->withInput();
         }
         $user_id = $created['id'];
 
-        foreach($roles as $value)
+        $user_role = $this->sUser->setUserRole($user_id, $roles);
+        if(!$user_role)
         {
-            $user_role = $this->sUser->setUserRole($user_id, $value);
+            SweetAlert::error('Error', $user_role['message']);
+            return redirect()->back()->withInput();
         }
+
         SweetAlert::success('Success', 'New user created successfully');
         return redirect()->route('user.index');
     }
 
-    public function edit()
+    public function edit($id)
     {
         $roles = $this->sRole->getActive();
+        $user  = $this->sUser->findById($id);
 
         $data = array(
-            'title' => 'Create User',
-            'roles' => $roles
+            'title'       => 'Edit User',
+            'active_menu' => 'Edit User',
+            'edit_mode'   => 1,
+            'roles'       => $roles,
+            'user'        => $user
         );
-        return $this->sGlobal->view('user.create', $data);
+
+        return $this->sGlobal->view('user.edit', $data);
     }
 
     public function doUpdate(Request $request)
     {
+        $id = $request->user_id;
+        $name = $request->name;
+        $email = $request->email;
+        $roles = $request->role;
 
+        $input = array(
+            'name'       => $name,
+            'email'      => $email,
+            'updated_at' => date('Y-m-d H:i:s')
+        );
+
+        $updated = $this->sUser->update($id, $input);
+        if(!$updated['status'])
+        {
+            SweetAlert::error('Error', $updated['message']);
+            return redirect()->back()->withInput();
+        }
+
+        $user_role = $this->sUser->setUserRole($id, $roles);
+        if(!$user_role)
+        {
+            alert()->error('Error', $user_role['message']);
+            return redirect()->back()->withInput();
+        }
+
+        alert()->success('Success', 'Data updated successfully');
+        return redirect()->route('user.index');
+    }
+
+    public function checkData($field, $keyword)
+    {
+        $user = $this->sUser->findData($field, $keyword);
+        return ($user) ? 0 : 1;
     }
 }

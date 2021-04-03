@@ -1,5 +1,4 @@
 <script>
-    var APP_URL = {!! json_encode(url('/')) !!}
     $(document).ready(function() {
         var user_table = $('#user_table').DataTable( {
 			processing: true,
@@ -61,11 +60,11 @@
                 {
 					orderable: true,
 					render: function(data, type, row, meta) {
-                        var is_active = "false";
-                        if(row.is_active==1) is_active = "true";
+                        var is_active = "";
+                        if(row.is_active==1) is_active = "checked";
                         var content = `
                             <label class="custom-toggle custom-toggle-success">
-                                <input type="checkbox" disabled checked="` + is_active + `">
+                                <input type="checkbox" disabled ` + is_active + `>
                                 <span class="custom-toggle-slider rounded-circle"></span>
                             </label>`;
 						return content;
@@ -84,8 +83,8 @@
                         var link_inactive = "";
                         if(row.restricted==0)
                         {
-                            link_edit = `href="/user/edit/` + row.id + `"`;
-                            link_inactive = `href="/user/delete/` + row.id + `"`;
+                            link_edit = `href="{{url('/user/edit/` + row.id + `')}}"`;
+                            link_inactive = `href="{{url('/user/delete/` + row.id + `')}}"`;
                         } else {
                             link_edit = `href="#"`;
                             link_inactive = `href="#"`;
@@ -108,5 +107,9 @@
             error:setTimeout(1000),
 			order: [0, 'asc'],
 		});
+
+        $('#searchactive').on('input', function(){
+            user_table.ajax.reload()
+        });
     });
 </script>

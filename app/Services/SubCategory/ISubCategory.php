@@ -6,7 +6,8 @@ use App\Services\IDefault;
 
 interface ISubCategory extends IDefault
 {
-    public function getActive();
+    public function getActive($keyword=null);
     public function getActiveByCategoryId($id);
-    public function list($keyword, $start, $length, $order);
+    public function listSubCategory($category, $keyword, $start, $length, $order);
+    public function checkData($field, $keyword);
 }

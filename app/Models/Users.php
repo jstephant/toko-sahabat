@@ -17,6 +17,6 @@ class Users extends Model
 
     public function getCreatedAtAttribute($date)
     {
-        return date('d-m-Y H:i:s', strtotime($date));
+        return date('j F Y H:i', strtotime($date));
     }
 }

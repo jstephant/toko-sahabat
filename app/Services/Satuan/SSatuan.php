@@ -97,7 +97,7 @@ class SSatuan implements ISatuan
         return $this->satuan->where('is_active', 1)->get();
     }
 
-    public function list($keyword, $start, $length, $order)
+    public function listSatuan($keyword, $start, $length, $order)
     {
         $satuan = $this->satuan;
 
@@ -122,5 +122,10 @@ class SSatuan implements ISatuan
         ];
 
         return $data;
+    }
+
+    public function findData($field, $keyword)
+    {
+        return $this->satuan->where($field, $keyword)->first();
     }
 }

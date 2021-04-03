@@ -11,11 +11,12 @@ interface IUser extends IDefault
 
     public function findByUsername($username);
     public function findByEmail($email);
+    public function findData($field, $keyword);
 
     public function getActive();
     public function list($keyword, $start, $length, $order);
 
     public function createUserRole($input);
     public function deleteUserRole($user_id, $role_id);
-    public function setUserRole($user_id, $role_id);
+    public function setUserRole($user_id, $roles);
 }

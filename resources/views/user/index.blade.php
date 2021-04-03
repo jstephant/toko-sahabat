@@ -8,7 +8,7 @@
 					<div class="col-lg-6 col-7">
 						<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 							<ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-								<li class="breadcrumb-item"><a href="/home"><i class="fas fa-home text-white"></i></a></li>
+								<li class="breadcrumb-item"><a href="{{url('home')}}"><i class="fas fa-home text-white"></i></a></li>
 								<li class="breadcrumb-item active"><a href="#" class="text-white">List of User</a></li>
 							</ol>
 						</nav>
@@ -32,7 +32,7 @@
 										<thead class="thead-light">
 											<tr>
 												<th scope="col">No</th>
-												<th scope="col">Name</th>
+												<th scope="col">Nama</th>
 												<th scope="col">Username</th>
 												<th scope="col">Email</th>
                                                 <th scope="col">Role</th>

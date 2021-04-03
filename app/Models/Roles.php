@@ -24,4 +24,9 @@ class Roles extends Model
     {
         return $this->belongsTo(Users::class, 'updated_by');
     }
+
+    public function getCreatedAtAttribute($date)
+    {
+        return date('j F Y H:i', strtotime($date));
+    }
 }

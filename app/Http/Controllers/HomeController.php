@@ -26,6 +26,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return $this->sGlobal->view('dashboard.index');
+        $data = array(
+            'title'       => 'Dashboard',
+            'active_menu' => 'Dashboard',
+            'edit_mode'   => 1
+        );
+        return $this->sGlobal->view('dashboard.index', $data);
     }
 }

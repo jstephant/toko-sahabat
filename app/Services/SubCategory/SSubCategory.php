@@ -4,6 +4,9 @@ namespace App\Services\SubCategory;
 
 use App\Models\SubCategory;
 use App\Services\SubCategory\ISubCategory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class SSubCategory implements ISubCategory
 {
@@ -89,14 +92,25 @@ class SSubCategory implements ISubCategory
         return $this->subCategory->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->subCategory->where('is_active', 1)->get();
+        $sub_category = $this->subCategory->where('is_active', 1);
+        if($keyword)
+        {
+            $sub_category = $sub_category->where('name', 'like', '%'.$keyword.'%');
+        }
+
+        return $sub_category->get();
     }
 
-    public function list($keyword, $start, $length, $order)
+    public function listSubCategory($category, $keyword, $start, $length, $order)
     {
         $sub_category = $this->subCategory->with('category');
+
+        if($category)
+        {
+            $sub_category = $sub_category->where('category_id', $category);
+        }
 
         if($keyword)
         {
@@ -123,5 +137,10 @@ class SSubCategory implements ISubCategory
     public function getActiveByCategoryId($id)
     {
         return $this->subCategory->where('category_id', $id)->where('is_active', 1)->get();
+    }
+
+    public function checkData($field, $keyword)
+    {
+        return $this->subCategory->where($field, $keyword)->first();
     }
 }

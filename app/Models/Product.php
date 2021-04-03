@@ -8,15 +8,11 @@ class Product extends Model
 {
     protected $table = 'products';
     protected $primaryKey = 'id';
+    protected $fillable = ['code', 'name', 'sub_category_id', 'hpp', 'image_url', 'barcode', 'is_active', 'created_by', 'created_at', 'updated_by', 'udpated_at'];
 
-    public function category()
+    public function product_sub_category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
-    }
-
-    public function sub_category()
-    {
-        return $this->belongsTo(SubCategory::class, 'sub_category_id');
+        return $this->hasMany(ProductSubCategory::class, 'product_id', 'id');
     }
 
     public function created_user()
@@ -32,5 +28,10 @@ class Product extends Model
     public function product_price_list()
     {
         return $this->hasMany(ProductPriceList::class, 'product_id', 'id');
+    }
+
+    public function getCreatedAtAttribute($date)
+    {
+        return date('j F Y H:i', strtotime($date));
     }
 }

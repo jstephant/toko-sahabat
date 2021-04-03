@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card shadow mt-5 mb-5">
-                    <form class="form-basic needs-validation" novalidate method="post" role="form" action="{{ route('user.create.post') }}" enctype="multipart/form-data" id="form-create-lead">
+                    <form class="form-basic needs-validation" novalidate method="post" role="form" action="{{ route('user.create.post') }}" enctype="multipart/form-data" id="form-create">
                         @csrf
                         <div class="card-body">
                             <div class="pl-lg-2">
@@ -33,6 +33,7 @@
                                         <div class="form-group">
                                             <label for="username" class="form-control-label">Username *</label>
                                             <input type="text" id="username" name="username" class="form-control" autocomplete="off" value="{{ old('username') }}" required>
+                                            <span class="mb-0 text-sm" id="check-username"></span>
                                             @if ($errors->has('username'))
                                                 <div class="invalid-feedback">{{ $errors->first('username') }}</div>
                                             @endif
@@ -52,12 +53,15 @@
                                     <div class="col-lg-5 col-md-6 col-xs-12">
                                         <div class="form-group">
                                             <label for="role" class="form-control-label">Role *</label>
-                                            <select id="role" name="role[]" class="form-control" data-toggle="select" data-live-search="true" multiple>
+                                            <select id="role" name="role[]" class="form-control" data-toggle="select" data-live-search="true" multiple required>
                                                 <option value=""></option>
                                                 @foreach ($roles as $item )
                                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                                 @endforeach
                                             </select>
+                                            @if ($errors->has('role'))
+                                                <div class="invalid-feedback">{{ $errors->first('role') }}</div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

@@ -8,5 +8,5 @@ interface ICustomer extends IDefault
 {
     public function getActive();
     public function getActiveByName($name);
-    public function list($keyword, $start, $length, $order);
+    public function listCustomer($keyword, $start, $length, $order);
 }

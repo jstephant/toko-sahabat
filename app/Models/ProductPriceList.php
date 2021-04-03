@@ -8,6 +8,7 @@ class ProductPriceList extends Model
 {
     protected $table = 'product_price_list';
     protected $primaryKey = 'id';
+    protected $fillable = ['product_id', 'satuan_id', 'price', 'active_at', 'created_by', 'created_at', 'updated_by', 'updated_at'];
 
     public function product()
     {

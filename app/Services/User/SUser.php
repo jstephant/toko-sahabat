@@ -122,7 +122,7 @@ class SUser implements IUser
 
     public function findById($id)
     {
-        return $this->users->where('id', $id)->first();
+        return $this->users->with('user_role')->where('id', $id)->first();
     }
 
     public function findByUsername($username)
@@ -135,14 +135,19 @@ class SUser implements IUser
         return $this->users->where('email', $email)->first();
     }
 
+    public function findData($field, $keyword)
+    {
+        return $this->users->where($field, $keyword)->first();
+    }
+
     public function getActive()
     {
-        return $this->users->where('is_active', 1)->select('id', 'name', 'user_name', 'email')->get();
+        return $this->users->where('is_active', 1)->where('restricted', 0)->select('id', 'name', 'user_name', 'email')->get();
     }
 
     public function list($keyword, $start, $length, $order)
     {
-        $users = $this->users->with('user_role', 'user_role.role');
+        $users = $this->users->with('user_role', 'user_role.role')->where('restricted', 0);
 
         if($keyword)
         {
@@ -219,21 +224,44 @@ class SUser implements IUser
         return $data;
     }
 
-    public function setUserRole($user_id, $role_id)
+    public function setUserRole($user_id, $roles)
     {
-        $user_role = $this->userRole->where('user_id', $user_id)->where('role_id', $role_id)->first();
-        if($user_role)
-        {
-            $deleted = $this->deleteUserRole($user_id, $role_id);
-            if(!$deleted['status'])
+        $status = array();
+        $type = array();
+        $message = array();
+
+        foreach ($roles as $value) {
+            $user_role = $this->userRole->where('user_id', $user_id)->where('role_id', $value)->first();
+            if($user_role)
             {
-                return $deleted;
+                $deleted = $this->deleteUserRole($user_id, $value);
+                array_push($status, $deleted['status']);
+                array_push($type, 'deleted');
+                array_push($message, $deleted['message']);
+            }
+
+            $input = array('user_id' => $user_id, 'role_id' => $value);
+            $created = $this->createUserRole($input);
+            array_push($status, $created['status']);
+            array_push($type, 'created');
+            array_push($message, $created['message']);
+        }
+
+        $data = array(
+            'status'  => true,
+            'message' => 'OK'
+        );
+        for ($i=0; $i < count($roles) ; $i++) {
+            if($status[$i]==false)
+            {
+                $data = array(
+                    'status'  => $status[$i],
+                    'message' => 'Error in '. $type[$i] . ': ' . $message[$i]
+                );
+                break;
             }
         }
 
-        $input = array('user_id' => $user_id, 'role_id' => $role_id);
-        $created = $this->createUserRole($input);
-
-        return $created;
+        return $data;
     }
 }

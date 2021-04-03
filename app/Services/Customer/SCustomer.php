@@ -102,7 +102,7 @@ class SCustomer implements ICustomer
         return $this->customer->where('is_active', 1)->where('name', 'like', '%'.$name.'%')->get();
     }
 
-    public function list($keyword, $start, $length, $order)
+    public function listCustomer($keyword, $start, $length, $order)
     {
         $customer = $this->customer;
 
