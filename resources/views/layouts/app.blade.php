@@ -25,8 +25,10 @@
         {{-- select2 --}}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
 
+        {{-- <link type="text/css" href="{{ $asset('css/dropzone.min.css') }}" rel="stylesheet"> --}}
+
         <!-- Argon CSS -->
-		<link type="text/css" href="{{ $asset('css/argon.min.css?v=1.2.0') }}" rel="stylesheet">
+        <link type="text/css" href="{{ $asset('css/argon.min.css?v=1.2.0') }}" rel="stylesheet">
 
         {{-- datatables --}}
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
@@ -253,7 +255,9 @@
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
-		<!-- Argon JS -->
+		<script src="{{ $asset('js/dropzone.min.js') }}"></script>
+
+        <!-- Argon JS -->
 		<script src="{{ $asset('js/argon.min.js?v=1.2.0') }}"></script>
 
         <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>

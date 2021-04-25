@@ -53,16 +53,18 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-6">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label for="barcode" class="form-control-label">Barcode</label>
-                                                    <input type="text" id="barcode" name="barcode" class="form-control" autocomplete="off" value="{{ $barcode }}">
+                                                    {!! DNS1D::getBarcodeHTML($barcode, 'C39') !!}
+                                                    <span class="text-sm text-dark">{{ $barcode }}</span>
+                                                    <input type="hidden" id="barcode" name="barcode" class="form-control" autocomplete="off" value="{{ $barcode }}">
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="custom-file">

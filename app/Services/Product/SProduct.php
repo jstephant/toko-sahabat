@@ -92,12 +92,12 @@ class SProduct implements IProduct
 
     public function findById($id)
     {
-        return $this->product->with(['sub_category', 'sub_category.category'])->where('id', $id)->first();
+        return $this->product->with(['product_sub_category', 'product_sub_category.sub_category.category'])->where('id', $id)->first();
     }
 
     public function getActive($keyword=null)
     {
-        $products = $this->product->with(['sub_category', 'sub_category.category']);
+        $products = $this->product->with(['product_sub_category', 'product_sub_category.sub_category.category']);
         if($keyword)
         {
             $products = $products->where('code', 'like', '%'.$keyword.'%')

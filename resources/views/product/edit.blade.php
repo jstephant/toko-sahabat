@@ -51,7 +51,6 @@
                                                                     @endif
                                                                 @endforeach
                                                             @endif
-
                                                             <option value="{{ $item->id }}" {{ $selected }}>{{ $item->name }}</option>
                                                         @endforeach
                                                     </select>
@@ -69,14 +68,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label for="barcode" class="form-control-label">Barcode</label>
-                                                    <input type="text" id="barcode" name="barcode" class="form-control" autocomplete="off" value="{{ $product->barcode }}">
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <div class="row">
                                             <div class="col-4" id="status-data">
                                                 <div class="form-group">
@@ -91,10 +83,37 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="barcode" class="form-control-label">Barcode</label>
+                                                    {!! DNS1D::getBarcodeHTML($product->barcode, 'C39') !!}
+                                                    <span class="text-sm text-dark">{{ $product->barcode }}</span>
+                                                    <input type="hidden" id="barcode" name="barcode" class="form-control" autocomplete="off" value="{{ $product->barcode }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-12">
-                                                <div class="custom-file">
-                                                    <input type="file" id="product_image" name="product_image" class="custom-file-input" lang="en">
-                                                    <label class="custom-file-label" for="product_image">Select image</label>
+                                                <div class="form-group">
+                                                    <label for="product_image" class="form-control-label">Foto</label>
+                                                    <div class="dropzone dropzone-single" data-toggle="dropzone" data-dropzone-url="http://">
+                                                        <div class="fallback">
+                                                            <div class="custom-file">
+                                                                <input type="file" class="custom-file-input" id="dropzoneBasicUpload">
+                                                                <label class="custom-file-label" for="dropzoneBasicUpload">Choose file</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="dz-preview dz-preview-single">
+                                                            <div class="dz-preview-cover">
+                                                                <img class="dz-preview-img" src="" alt="..." data-dz-thumbnail>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {{-- <div class="custom-file">
+                                                        <input type="file" id="product_image" name="product_image" class="custom-file-input" lang="en">
+                                                        <label class="custom-file-label" for="product_image">Select image</label>
+                                                    </div> --}}
                                                 </div>
                                             </div>
                                         </div>
