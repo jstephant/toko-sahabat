@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Satuan\SatuanRequest;
+use App\Models\Satuan;
 use App\Services\Satuan\SSatuan;
 use App\Services\SGlobal;
 use Illuminate\Http\Request;
@@ -36,52 +38,53 @@ class SatuanController extends Controller
         return $satuan;
     }
 
-    public function doSave(Request $request)
+    public function listActive()
     {
+        $satuan = $this->sSatuan->getActive();
+        return response()->json($satuan, 200);
+    }
+
+    public function doSave(SatuanRequest $request)
+    {
+        $validated = $request->validated();
+
         $mode = $request->mode;
         $satuan_id = $request->satuan_id;
         $code = $request->code;
         $name = $request->name;
         $status = $request->status;
+        $qty = $request->qty;
 
         if($mode=='create')
         {
             $input = array(
                 'code' => $code,
-                'name' => $name
+                'name' => $name,
+                'qty'  => $qty,
             );
 
             $created = $this->sSatuan->create($input);
             if(!$created['status'])
             {
-                alert()->error('Error', $created['message']);
-                return redirect()->back()->withInput();
+                return redirect()->back()->with('error', $created['message']);
             }
         } elseif($mode=='edit')
         {
             $input = array(
                 'code'       => $code,
                 'name'       => $name,
+                'qty'        => $qty,
                 'is_active'  => $status,
+                'updated_at' => date('Y-m-d H:i:s')
             );
 
             $updated = $this->sSatuan->update($satuan_id, $input);
             if(!$updated['status'])
             {
-                alert()->error('Error', $updated['message']);
-                return redirect()->back()->withInput();
+                return redirect()->back()->with('error', $updated['message']);
             }
         }
 
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('satuan.index');
+        return redirect()->route('satuan.index')->with('success', 'Data berhasil diupdate');
     }
-
-    public function checkData($field, $keyword)
-    {
-        $satuan = $this->sSatuan->findData($field, $keyword);
-        return ($satuan) ? 0 : 1;
-    }
-
-
 }

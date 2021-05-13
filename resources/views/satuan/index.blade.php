@@ -28,14 +28,15 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="table-responsive">
-									<table class="table table-striped display responsive nowrap dataTable" id="satuan_table" width="100%">
+									<table class="table table-striped display responsive" id="satuan_table" width="100%">
 										<thead class="thead-light">
 											<tr>
-												<th scope="col">No</th>
                                                 <th scope="col">Kode</th>
 												<th scope="col">Nama</th>
-												<th scope="col">Active</th>
-												<th scope="col"></th>
+                                                <th scope="col" width="20%">Kuantitas Std (pcs)</th>
+												<th scope="col" width="10%">Active</th>
+                                                <th scope="col" width="10%">Tgl. Update</th>
+												<th scope="col" width="5%"></th>
 											</tr>
 										</thead>
 									</table>

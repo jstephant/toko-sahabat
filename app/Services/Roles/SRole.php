@@ -99,7 +99,7 @@ class SRole implements IRole
 
     public function listRole($keyword, $start, $length, $order)
     {
-        $roles = $this->roles->where('restricted', 0);
+        $roles = $this->roles->with(['created_user', 'updated_user'])->where('restricted', 0);
 
         if($keyword)
         {
@@ -112,6 +112,21 @@ class SRole implements IRole
             $roles = $roles->offset($start)->limit($length);
         }
 
+        if(count($order)>0)
+        {
+            switch ($order[0]['column']) {
+                case 0:
+                    $roles = $roles->orderby('name', $order[0]['dir']);
+                    break;
+                case 2:
+                    $roles = $roles->orderby('created_at', $order[0]['dir']);
+                    break;
+                default:
+                    $roles = $roles->orderby('created_at', $order[0]['dir']);
+                    break;
+            }
+        }
+
         $roles = $roles->get();
 
         $data = [
@@ -121,10 +136,5 @@ class SRole implements IRole
         ];
 
         return $data;
-    }
-
-    public function findData($field, $keyword)
-    {
-        return $this->roles->where($field, $keyword)->first();
     }
 }

@@ -104,7 +104,7 @@ class SCustomer implements ICustomer
 
     public function listCustomer($keyword, $start, $length, $order)
     {
-        $customer = $this->customer;
+        $customer = $this->customer->with(['created_user', 'updated_user']);
 
         if($keyword)
         {

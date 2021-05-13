@@ -28,16 +28,15 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="table-responsive">
-									<table class="table table-striped display responsive nowrap dataTable" id="customer_table" width="100%">
+									<table class="table align-items-center table-flush dataTable" id="customer_table" width="100%">
 										<thead class="thead-light">
 											<tr>
-												<th scope="col">No</th>
 												<th scope="col">Nama</th>
-												<th scope="col">Phone</th>
+												<th scope="col">No. Telp</th>
 												<th scope="col">Alamat</th>
-												<th scope="col">Active</th>
-												<th scope="col">Submitted On</th>
-												<th scope="col"></th>
+												<th scope="col" width="5%">Active</th>
+												<th scope="col" width="10%">Tgl. Update</th>
+												<th scope="col" width="5%"></th>
 											</tr>
 										</thead>
 									</table>

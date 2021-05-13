@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubCategory\SubCategoryRequest;
 use App\Services\Category\SCategory;
 use App\Services\SGlobal;
 use App\Services\SubCategory\SSubCategory;
@@ -47,8 +48,10 @@ class SubCategoryController extends Controller
         return ($sub_category) ? 0 : 1;
     }
 
-    public function doSave(Request $request)
+    public function doSave(SubCategoryRequest $request)
     {
+        $validated = $request->validated();
+
         $mode = $request->sub_mode;
         $sub_category_id = $request->sub_category_id;
         $category_id = $request->category2;

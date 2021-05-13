@@ -121,6 +121,18 @@ class SCategory implements ICategory
             $category = $category->offset($start)->limit($length);
         }
 
+        if(count($order)>0)
+        {
+            switch ($order[0]['column']) {
+                case 0:
+                    $category = $category->orderby('name', $order[0]['dir']);
+                    break;
+                default:
+                    $category = $category->orderby('name', $order[0]['dir']);
+                    break;
+            }
+        }
+
         $category = $category->get();
 
         $data = [
@@ -152,10 +164,5 @@ class SCategory implements ICategory
         }
 
         return $data;
-    }
-
-    public function checkData($field, $keyword)
-    {
-        return $this->category->where($field, $keyword)->first();
     }
 }

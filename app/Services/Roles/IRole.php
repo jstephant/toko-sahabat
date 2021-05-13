@@ -8,5 +8,4 @@ interface IRole extends IDefault
 {
     public function getActive();
     public function listRole($keyword, $start, $length, $order);
-    public function findData($field, $keyword);
 }

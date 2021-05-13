@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Customer\CreateCustomerRequest;
+use App\Http\Requests\Customer\EditCustomerRequest;
 use App\Services\Customer\SCustomer;
 use App\Services\SGlobal;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -46,8 +49,10 @@ class CustomerController extends Controller
         return $this->sGlobal->view('customer.create', $data);
     }
 
-    public function doCreate(Request $request)
+    public function doCreate(CreateCustomerRequest $request)
     {
+        $validate = $request->validated();
+
         $name = $request->name;
         $phone = $request->phone;
         $address = $request->address;
@@ -56,17 +61,17 @@ class CustomerController extends Controller
             'name'         => $name,
             'mobile_phone' => $phone,
             'address'      => $address,
+            'created_by'   => $request->session()->get('id'),
         );
 
         $created = $this->sCustomer->create($input);
         if(!$created['status'])
         {
-            alert()->error('Error', $created['message']);
-            return redirect()->back()->withInput();
+            alert()->error('Error', );
+            return redirect()->back()->with('error', $created['message']);
         }
 
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('customer.index');
+        return redirect()->route('customer.index')->with('success', 'Data berhasil dibuat');
     }
 
     public function edit($id)
@@ -82,8 +87,10 @@ class CustomerController extends Controller
         return $this->sGlobal->view('customer.edit', $data);
     }
 
-    public function doUpdate(Request $request)
+    public function doUpdate(EditCustomerRequest $request)
     {
+        $validate = $request->validated();
+
         $customer_id = $request->customer_id;
         $name = $request->name;
         $phone = $request->phone;
@@ -95,17 +102,16 @@ class CustomerController extends Controller
             'mobile_phone' => $phone,
             'address'      => $address,
             'is_active'    => $status,
+            'updated_by'   => $request->session()->get('id'),
             'updated_at'   => date('Y-m-d H:i:s'),
         );
 
         $updated = $this->sCustomer->update($customer_id, $input);
         if(!$updated['status'])
         {
-            alert()->error('Error', $updated['message']);
-            return redirect()->back()->withInput();
+            return redirect()->back()->with('error', $updated['message']);
         }
 
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('customer.index');
+        return redirect()->route('customer.index')->with('success', 'Data berhasil diupdate');
     }
 }

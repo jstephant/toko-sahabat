@@ -4,9 +4,6 @@
             minimumResultsForSearch: -1
         });
 
-        $('#sub_category').select2({
-            placeholder: 'Select Sub Kategori',
-            minimumInputLength: -1
-        });
+        $('#sub_category, #satuan').select2({});
     });
 </script>

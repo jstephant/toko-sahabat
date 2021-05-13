@@ -10,7 +10,7 @@
 				url: APP_URL + '/satuan/list',
 				data: function(d) {
 					d.keyword = $('#searchactive').val();
-				}
+				},
 			},
 			dom:
 				"<'row'<'col-sm-12 col-md-6'l>>" +
@@ -29,11 +29,6 @@
 			pagingType: "simple_numbers",
 			columns : [
                 {
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
 					orderable: true,
 					render: function(data, type, row, meta) {
                         return row.code;
@@ -48,14 +43,26 @@
                 {
 					orderable: true,
 					render: function(data, type, row, meta) {
+                        return row.qty;
+					}
+				},
+                {
+					orderable: false,
+					render: function(data, type, row, meta) {
                         var is_active = "";
                         if(row.is_active==1) is_active = "checked";
                         var content = `
                             <label class="custom-toggle custom-toggle-success">
                                 <input type="checkbox" disabled ` + is_active + `>
-                                <span class="custom-toggle-slider rounded-circle"></span>
+                                <span class="custom-toggle-slider rounded-circle data-label-off="No" data-label-on="Yes"></span>
                             </label>`;
 						return content;
+					}
+				},
+                {
+					orderable: true,
+					render: function(data, type, row, meta) {
+                        return (row.updated_at) ? row.updated_at : row.created_at;
 					}
 				},
                 {
@@ -73,6 +80,7 @@
                                             data-id="` + row.id + `"
                                             data-code="` + row.code + `"
                                             data-name="` + row.name + `"
+                                            data-qty="` + row.qty + `"
                                             data-status="` + row.is_active + `">Edit
                                         </a>
                                         <a class="dropdown-item" href="{{url('/satuan/delete/` + row.id + `')}}">Delete</a>

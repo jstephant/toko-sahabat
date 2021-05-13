@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PurchaseProduct extends Model
 {
     protected $table = 'purchase_product';
+    public $timestamps = false;
 
     public function purchase()
     {

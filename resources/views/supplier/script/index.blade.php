@@ -29,11 +29,6 @@
 			pagingType: "simple_numbers",
 			columns : [
                 {
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
 					orderable: true,
 					render: function(data, type, row, meta) {
                         return row.name;
@@ -58,14 +53,14 @@
 					}
 				},
                 {
-					orderable: true,
+					orderable: false,
 					render: function(data, type, row, meta) {
                         var is_active = "";
                         if(row.is_active==1) is_active = "checked";
                         var content = `
                             <label class="custom-toggle custom-toggle-success">
                                 <input type="checkbox" disabled ` + is_active + `>
-                                <span class="custom-toggle-slider rounded-circle"></span>
+                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
                             </label>`;
 						return content;
 					}
@@ -73,7 +68,17 @@
                 {
 					orderable: true,
 					render: function(data, type, row, meta) {
-                        return row.created_at
+						var content = '';
+                        if(row.updated_by==null){
+                            content += row.created_at;
+                            content += `<br>`;
+                            content += `By <span>` + row.created_user.name + `</span>`
+                        } else {
+                            content += row.updated_at;
+                            content += `<br>`;
+                            content += `By <span>` + row.updated_user.name + `</span>`
+                        }
+                        return content
 					}
 				},
                 {
@@ -99,7 +104,7 @@
 		});
 
         $('#searchactive').on('input', function(){
-            customer_table.ajax.reload()
+            supplier_table.ajax.reload()
         });
     });
 </script>

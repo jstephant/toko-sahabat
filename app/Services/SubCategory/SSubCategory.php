@@ -105,7 +105,10 @@ class SSubCategory implements ISubCategory
 
     public function listSubCategory($category, $keyword, $start, $length, $order)
     {
-        $sub_category = $this->subCategory->with('category');
+        $sub_category = SubCategory::select('sub_category.*', 'category.name as category_name')
+                                    ->leftjoin('category', 'sub_category.category_id', 'category.id')
+                                    ->wherenotnull('sub_category.id');
+        // $sub_category = $this->subCategory->with('category');
 
         if($category)
         {
@@ -114,13 +117,27 @@ class SSubCategory implements ISubCategory
 
         if($keyword)
         {
-            $sub_category = $sub_category->where('name', 'like', '%'.$keyword.'%');
+            $sub_category = $sub_category->where('sub_category.name', 'like', '%'.$keyword.'%');
         }
 
         $count = $sub_category->count();
 
         if($length!=-1) {
             $sub_category = $sub_category->offset($start)->limit($length);
+        }
+
+        if(count($order)>0)
+        {
+            switch ($order[0]['column']) {
+                case 0:
+                    $sub_category = $sub_category->orderby('name', $order[0]['dir']);
+                    break;
+                case 1:
+                    $sub_category = $sub_category->orderby('category_name', $order[0]['dir']);
+                default:
+                    $sub_category = $sub_category->orderby('name', $order[0]['dir']);
+                    break;
+            }
         }
 
         $sub_category = $sub_category->get();
@@ -137,10 +154,5 @@ class SSubCategory implements ISubCategory
     public function getActiveByCategoryId($id)
     {
         return $this->subCategory->where('category_id', $id)->where('is_active', 1)->get();
-    }
-
-    public function checkData($field, $keyword)
-    {
-        return $this->subCategory->where($field, $keyword)->first();
     }
 }

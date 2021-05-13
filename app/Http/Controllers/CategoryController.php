@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Category\CategoryRequest;
 use App\Services\Category\SCategory;
 use App\Services\SGlobal;
 use Illuminate\Http\Request;
@@ -41,8 +42,10 @@ class CategoryController extends Controller
         return ($category) ? 0 : 1;
     }
 
-    public function doSave(Request $request)
+    public function doSave(CategoryRequest $request)
     {
+        $validated = $request->validated();
+
         $mode = $request->mode;
         $category_id = $request->category_id;
         $name = $request->name;

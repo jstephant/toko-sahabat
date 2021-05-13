@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Hash;
+use Image;
 
 class SGlobal implements IGlobal
 {
@@ -72,5 +73,22 @@ class SGlobal implements IGlobal
     public function passwordEncrpt($password)
     {
         return Hash::make($password);
+    }
+
+    public function uploadImage($file, $destFolder)
+    {
+        $new_name = time() . '.' . $file->extension();
+        $destinationPath = public_path('images/'.$destFolder.'/thumbnail');
+        $img = Image::make($file->path());
+        $img->resize(100, 100, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath.'/'.$new_name);
+
+        $destinationPath = public_path('images/'.$destFolder);
+        $img->resize(700, 700, function($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath.'/'.$new_name);
+
+        return $new_name;
     }
 }

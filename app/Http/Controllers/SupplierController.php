@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Supplier\CreateSupplierRequest;
+use App\Http\Requests\Supplier\EditSupplierRequest;
 use App\Services\SGlobal;
 use App\Services\Supplier\SSupplier;
 use Illuminate\Http\Request;
@@ -46,8 +48,10 @@ class SupplierController extends Controller
         return $this->sGlobal->view('supplier.create', $data);
     }
 
-    public function doCreate(Request $request)
+    public function doCreate(CreateSupplierRequest $request)
     {
+        $validated = $request->validated();
+
         $name = $request->name;
         $phone = $request->phone;
         $email = $request->email;
@@ -58,17 +62,16 @@ class SupplierController extends Controller
             'mobile_phone' => $phone,
             'email'        => $email,
             'address'      => $address,
+            'created_by'   => $request->session()->get('id'),
         );
 
         $created = $this->sSupplier->create($input);
         if(!$created['status'])
         {
-            alert()->error('Error', $created['message']);
-            return redirect()->back()->withInput();
+            return redirect()->back()->with('error', $created['message']);
         }
 
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('supplier.index');
+        return redirect()->route('supplier.index')->with('success', 'Data berhasil dibuat');
     }
 
     public function edit($id)
@@ -84,8 +87,10 @@ class SupplierController extends Controller
         return $this->sGlobal->view('supplier.edit', $data);
     }
 
-    public function doUpdate(Request $request)
+    public function doUpdate(EditSupplierRequest $request)
     {
+        $validated = $request->validated();
+
         $supplier_id = $request->supplier_id;
         $name = $request->name;
         $phone = $request->phone;
@@ -99,17 +104,22 @@ class SupplierController extends Controller
             'email'        => $email,
             'address'      => $address,
             'is_active'    => $status,
+            'updated_by'   => $request->session()->get('id'),
             'updated_at'   => date('Y-m-d H:i:s'),
         );
 
         $updated = $this->sSupplier->update($supplier_id, $input);
         if(!$updated['status'])
         {
-            alert()->error('Error', $updated['message']);
-            return redirect()->back()->withInput();
+            return redirect()->back()->with('error', $updated['message']);
         }
 
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('supplier.index');
+        return redirect()->route('supplier.index')->with('success', 'Data berhasil diupdate');
+    }
+
+    public function listActive()
+    {
+        $supplier = $this->sSupplier->getActive();
+        return response()->json($supplier);
     }
 }

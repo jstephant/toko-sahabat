@@ -41,7 +41,6 @@
 									<table class="table table-striped display responsive nowrap dataTable" id="category_table" width="100%">
 										<thead class="thead-light">
 											<tr>
-												<th scope="col">No</th>
 												<th scope="col">Nama Kategori</th>
 												<th scope="col">Active</th>
 												<th scope="col"></th>
@@ -65,10 +64,9 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="table-responsive">
-									<table class="table table-striped display responsive nowrap dataTable" id="sub_category_table" width="100%">
+									<table class="table table-striped display responsive" id="sub_category_table" width="100%">
 										<thead class="thead-light">
 											<tr>
-												<th scope="col">No</th>
 												<th scope="col">Nama Sub Kategori</th>
                                                 <th scope="col">Kategori</th>
 												<th scope="col">Active</th>

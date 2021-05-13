@@ -29,11 +29,6 @@
 			pagingType: "simple_numbers",
 			columns : [
                 {
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
 					orderable: true,
 					render: function(data, type, row, meta) {
                         return row.name;
@@ -42,18 +37,18 @@
                 {
 					orderable: true,
 					render: function(data, type, row, meta) {
-                        return row.category.name;
+                        return row.category_name;
 					}
 				},
                 {
-					orderable: true,
+					orderable: false,
 					render: function(data, type, row, meta) {
                         var is_active = "";
                         if(row.is_active==1) is_active = "checked";
                         var content = `
                             <label class="custom-toggle custom-toggle-success">
                                 <input type="checkbox" disabled ` + is_active + `>
-                                <span class="custom-toggle-slider rounded-circle"></span>
+                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
                             </label>`;
 						return content;
 					}

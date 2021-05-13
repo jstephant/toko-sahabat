@@ -12,7 +12,7 @@ class Roles extends Model
 
     public function user_role()
     {
-        return $this->hasMany(UserRole::class, 'role_id', 'id');
+        return $this->hasMany(Users::class, 'role_id', 'id');
     }
 
     public function created_user()
@@ -28,5 +28,10 @@ class Roles extends Model
     public function getCreatedAtAttribute($date)
     {
         return date('j F Y H:i', strtotime($date));
+    }
+
+    public function getUpdatedAtAttribute($date)
+    {
+        return ($date) ? date('j F Y H:i', strtotime($date)) : null;
     }
 }

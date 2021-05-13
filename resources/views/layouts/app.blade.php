@@ -130,7 +130,7 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{url('pembelian')}}">
+                                            <a class="nav-link" href="{{url('beli')}}">
                                                 <span class="sidenav-mini-icon"><i class="ni ni-money-coins text-default"></i></span>
                                                 <span class="sidenav-normal">Pembelian</span>
                                             </a>
@@ -211,7 +211,7 @@
                                         {{-- <img alt="Image placeholder" src="../../assets/img/theme/team-4.jpg"> --}}
                                     </span>
                                     <div class="media-body  ml-2  d-none d-lg-block">
-                                        <span class="mb-0 text-sm text-dark font-weight-bold">{{ session('user_name') }}</span>
+                                        <span class="mb-0 text-sm text-white font-weight-bold">{{ session('user_name') }}</span>
                                     </div>
                                 </div>
                             </a>
@@ -219,7 +219,7 @@
                                 <div class="dropdown-header noti-title">
                                     <h6 class="text-overflow m-0">Welcome!</h6>
                                 </div>
-                                <a href="#!" class="dropdown-item">
+                                <a href="{{ url('/auth/logout') }}" class="dropdown-item">
                                     <i class="ni ni-user-run"></i>
                                     <span>Logout</span>
                                 </a>
@@ -229,6 +229,7 @@
                 </div>
             </div>
         </nav>
+        @include('alert.alert')
         @yield('content')
         <div class="container-fluid">
             <!-- Footer -->

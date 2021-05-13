@@ -13,55 +13,56 @@
                                 <div class="row">
                                     <div class="col-lg-5 col-md-6 col-xs-12">
                                         <div class="form-group">
-                                            <label for="name" class="form-control-label">Nama *</label>
-                                            <input type="text" id="name" name="name" class="form-control" autocomplete="off" value="{{ old('name') }}" required autofocus>
-                                            @if ($errors->has('name'))
-                                                <div class="invalid-feedback">{{ $errors->first('name') }}</div>
-                                            @endif
+                                            <label for="name" class="col-form-label-sm text-uppercase display-4">Nama *</label>
+                                            <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" autocomplete="off" value="{{ old('name') }}" required autofocus>
+                                            @error('name')
+                                                <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-5 col-md-6 col-xs-12">
                                         <div class="form-group">
-                                            <label for="email" class="form-control-label">Email</label>
-                                            <input type="email" id="email" name="email" class="form-control" autocomplete="off" value="{{ old('email') }}">
-                                            <div class="invalid-feedback">Please fill out this field.</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-5 col-md-6 col-xs-12">
-                                        <div class="form-group">
-                                            <label for="username" class="form-control-label">Username *</label>
-                                            <input type="text" id="username" name="username" class="form-control" autocomplete="off" value="{{ old('username') }}" required>
-                                            <span class="mb-0 text-sm" id="check-username"></span>
-                                            @if ($errors->has('username'))
-                                                <div class="invalid-feedback">{{ $errors->first('username') }}</div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-5 col-md-6 col-xs-12">
-                                        <div class="form-group">
-                                            <label for="password" class="form-control-label">Password *</label>
-                                            <input type="password" id="password" name="password" class="form-control" autocomplete="off" required>
-                                            @if ($errors->has('password'))
-                                                <div class="invalid-feedback">{{ $errors->first('password') }}</div>
-                                            @endif
+                                            <label for="email" class="col-form-label-sm text-uppercase display-4">Email</label>
+                                            <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" autocomplete="off" value="{{ old('email') }}">
+                                            @error('email')
+                                                <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-5 col-md-6 col-xs-12">
                                         <div class="form-group">
-                                            <label for="role" class="form-control-label">Role *</label>
-                                            <select id="role" name="role[]" class="form-control" data-toggle="select" data-live-search="true" multiple required>
+                                            <label for="username" class="col-form-label-sm text-uppercase display-4">Username *</label>
+                                            <input type="text" id="username" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" autocomplete="off" required>
+                                            @error('username')
+                                                <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="password" class="col-form-label-sm text-uppercase display-4">Password *</label>
+                                            <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" autocomplete="off" required>
+                                            @error('password')
+                                                <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-5 col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="role" class="col-form-label-sm text-uppercase display-4">Role *</label>
+                                            <select id="role" name="role" class="form-control @error('role') is-invalid @enderror" data-toggle="select" data-live-search="true" required>
                                                 <option value=""></option>
                                                 @foreach ($roles as $item )
-                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                    <option value="{{ $item->id }}" {{ old('role')==$item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @if ($errors->has('role'))
-                                                <div class="invalid-feedback">{{ $errors->first('role') }}</div>
-                                            @endif
+                                            @error('role')
+                                                <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -69,8 +70,8 @@
                         </div>
                         <div class="card-footer text-center">
                             <div class="d-flex">
-                                <a href="{{url('/user')}}" id="btn_cancel" name="action" class="btn btn-link">Cancel</a>
-                                <button type="submit" id="btn_save" name="action" class="btn btn-facebook" value="save">Save</button>
+                                <a href="{{url('/user')}}" id="btn_cancel" name="action" class="btn btn-link">Batal</a>
+                                <button type="submit" id="btn_save" name="action" class="btn btn-facebook" value="save">Simpan</button>
                             </div>
                         </div>
                     </form>

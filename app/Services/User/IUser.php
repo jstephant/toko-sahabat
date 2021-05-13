@@ -11,7 +11,6 @@ interface IUser extends IDefault
 
     public function findByUsername($username);
     public function findByEmail($email);
-    public function findData($field, $keyword);
 
     public function getActive();
     public function list($keyword, $start, $length, $order);

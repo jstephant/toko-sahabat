@@ -28,17 +28,15 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="table-responsive">
-									<table class="table table-striped display responsive nowrap dataTable" id="product_table" width="100%">
+									<table class="table align-items-center table-flush dataTable" id="product_table" width="100%">
 										<thead class="thead-light">
 											<tr>
-												<th scope="col">Image</th>
-												<th scope="col">Kode Barang</th>
-												<th scope="col">Nama Barang</th>
-												<th scope="col">Sub Kategori</th>
+												<th scope="col">Description</th>
                                                 <th scope="col">HPP (Rp)</th>
+                                                <th scope="col">Satuan</th>
                                                 <th scope="col">Barcode</th>
 												<th scope="col">Active</th>
-												<th scope="col">Submitted On</th>
+												<th scope="col">Tgl. Update</th>
 												<th scope="col"></th>
 											</tr>
 										</thead>

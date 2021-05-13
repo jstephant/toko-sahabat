@@ -11,6 +11,10 @@ interface IProduct extends IDefault
     public function generateCode($type, $length=4);
 
     public function createSubCategory($input);
-    public function deleteSubCategory($product_id, $sub_category_id);
+    public function deleteSubCategory($product_id);
     public function setSubCategory($product_id, $sub_categories);
+
+    public function createProductSatuan($input);
+    public function deleteProductSatuan($product_id);
+    public function setProductSatuan($product_id, $satuan);
 }

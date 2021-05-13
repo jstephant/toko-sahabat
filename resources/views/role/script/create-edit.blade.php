@@ -33,32 +33,42 @@
                 $("#status").prop('required', true);
 			}
 		});
+    });
 
-        $('#check-name').hide();
-        $('#name').on('input', function(){
-            if($('#name').val()==""){
-                $('#check-name').hide();
-            } else {
-                $.ajax({
-                    type: "GET",
-                    url: APP_URL + '/role/check-name/' + $('#name').val(),
-                    success: function (response) {
-                        console.log();
-                        $('#check-name').removeClass('text-success text-danger');
-                        if(response==1) {
-                            $('#check-name').text('tersedia');
-                            $('#check-name').addClass('text-success');
-                        } else {
-                            $('#check-name').text('tidak tersedia');
-                            $('#check-name').addClass('text-danger');
-                        }
-                    },
-                    complete: function()
-                    {
-                        $('#check-name').show();
-                    }
-                });
+    function storeData() {
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+        var role_id = $('#role_id').val();
+        var role_name = $('#name').val();
+        var status = $('#status').val();
+        var mode = $('#mode').val();
+
+        $('#nameError').addClass('d-none');
+        $('#statusError').addClass('d-none');
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('role.save.post')}}",
+            data: {
+                _token: csrf_token,
+                role_id: role_id,
+                name: role_name,
+                status: status,
+                mode: mode
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function (response) {
+                var errors = response.responseJSON;
+                if($.isEmptyObject(errors) == false)
+                {
+                    $.each(errors.errors, function (key, value) {
+                         var errorID = '#' + key + 'Error';
+                         $(errorID).removeClass('d-none');
+                         $(errorID).text(value);
+                    });
+                }
             }
         });
-    });
+    }
 </script>

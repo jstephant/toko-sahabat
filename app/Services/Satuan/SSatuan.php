@@ -94,7 +94,7 @@ class SSatuan implements ISatuan
 
     public function getActive()
     {
-        return $this->satuan->where('is_active', 1)->get();
+        return $this->satuan->where('is_active', 1)->orderby('name', 'asc')->get();
     }
 
     public function listSatuan($keyword, $start, $length, $order)
@@ -113,6 +113,27 @@ class SSatuan implements ISatuan
             $satuan = $satuan->offset($start)->limit($length);
         }
 
+        if(count($order)>0)
+        {
+            switch ($order[0]['column']) {
+                case 0:
+                    $satuan = $satuan->orderby('code', $order[0]['dir']);
+                    break;
+                case 1:
+                    $satuan = $satuan->orderby('name', $order[0]['dir']);
+                    break;
+                case 2:
+                    $satuan = $satuan->orderby('qty', $order[0]['dir']);
+                    break;
+                case 4:
+                    $satuan = $satuan->orderby('created_at', $order[0]['dir']);
+                    break;
+                default:
+                    $satuan = $satuan->orderby('created_at', $order[0]['dir']);
+                    break;
+            }
+        }
+
         $satuan = $satuan->get();
 
         $data = [
@@ -122,10 +143,5 @@ class SSatuan implements ISatuan
         ];
 
         return $data;
-    }
-
-    public function findData($field, $keyword)
-    {
-        return $this->satuan->where($field, $keyword)->first();
     }
 }

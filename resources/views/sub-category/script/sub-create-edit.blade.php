@@ -50,31 +50,38 @@
                 $("#sub_status").prop('required', true);
 			}
 		});
+    });
 
-        $('#sub-name').on('input', function(){
-            if($('#sub-name').val()==""){
-                $('#check-sub-name').hide();
-            } else {
-                $.ajax({
-                    type: "GET",
-                    url: APP_URL + '/sub-kategori/check-name/' + $('#sub-name').val(),
-                    success: function (response) {
-                        console.log();
-                        $('#check-sub-name').removeClass('text-success text-danger');
-                        if(response==1) {
-                            $('#check-sub-name').text('tersedia');
-                            $('#check-sub-name').addClass('text-success');
-                        } else {
-                            $('#check-sub-name').text('tidak tersedia');
-                            $('#check-sub-name').addClass('text-danger');
-                        }
-                    },
-                    complete: function()
-                    {
-                        $('#check-sub-name').show();
-                    }
-                });
+    function storeDataSubCategory() {
+        $('#subnameError').addClass('d-none');
+        $('#categoryError').addClass('d-none');
+        $('#substatusError').addClass('d-none');
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('subcategory.save.post') }}",
+            data: {
+                _token: CRSF_TOKEN,
+                sub_category_id: $('#sub_category_id').val(),
+                sub_name: $('#sub_name').val(),
+                category2: $('#category2').val(),
+                sub_status: $('#sub_status').val(),
+                sub_mode: $('#sub_mode').val()
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function (response) {
+                var errors = response.responseJSON;
+                if($.isEmptyObject(errors) == false)
+                {
+                    $.each(errors.errors, function (key, value) {
+                         var errorID = '#' + key + 'Error';
+                         $(errorID).removeClass('d-none');
+                         $(errorID).text(value);
+                    });
+                }
             }
         });
-    });
+    }
 </script>

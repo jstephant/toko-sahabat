@@ -9,5 +9,4 @@ interface ISubCategory extends IDefault
     public function getActive($keyword=null);
     public function getActiveByCategoryId($id);
     public function listSubCategory($category, $keyword, $start, $length, $order);
-    public function checkData($field, $keyword);
 }
