@@ -85,16 +85,16 @@
         content += `<button class="btn btn-icon btn-link p-0 text-danger remove-item" type="button" data-toggle="tooltip" data-placement="bottom" title="Remove Item">`;
 	    content += `<span class="btn-inner--icon"><i class="far fa-trash-alt"></i></span>`;
         content += `</button>`;
+        content += `<input type="hidden" name="products[]" class="product_id" value="` + product_id + `">`;
+        content += `<input type="hidden" name="satuan[]" class="satuan" value="` + satuan_id + `">`;
+        content += `<input type="hidden" name="qty[]" class="qty" value="` + qty + `">`;
+        content += `<input type="hidden" name="price[]" class="price" value="` + price + `">`;
+        content += `<input type="hidden" name="sub_total[]" class="sub_total" value="` + sub_total + `">`;
+        content += `<input type="hidden" name="disc_pctg[]" class="disc_pctg" value="` + disc_pctg + `">`;
+        content += `<input type="hidden" name="disc_rp[]" class="disc_rp" value="` + disc_rp + `">`;
+        content += `<input type="hidden" name="total[]" class="total" value="` + total + `">`;
         content += `</td>`;
         content += `</tr>`;
-        content += `<input type="hidden" name="products[]" value="` + product_id + `">`;
-        content += `<input type="hidden" name="satuan[]" value="` + satuan_id + `">`;
-        content += `<input type="hidden" name="qty[]" value="` + qty + `">`;
-        content += `<input type="hidden" name="price[]" value="` + price + `">`;
-        content += `<input type="hidden" name="sub_total[]" value="` + sub_total + `">`;
-        content += `<input type="hidden" name="disc_pctg[]" value="` + disc_pctg + `">`;
-        content += `<input type="hidden" name="disc_rp[]" value="` + disc_rp + `">`;
-        content += `<input type="hidden" name="total[]" value="` + total + `">`;
 
         if(mode=='create')
             $('#detail_purchase > tbody:last-child').append(content);
@@ -106,20 +106,18 @@
             $(selected_item).find('.x4').html(sub_total);
             $(selected_item).find('.x5').html(`(%): ` + disc_pctg + `<br>Rp: ` + disc_rp);
             $(selected_item).find('.x6').html(total);
+
+            $(selected_item).find('.qty').val(qty);
+            $(selected_item).find('.price').val(price);
+            $(selected_item).find('.sub_total').val(sub_total);
+            $(selected_item).find('.disc_pctg').val(disc_pctg);
+            $(selected_item).find('.disc_rp').val(disc_rp);
+            $(selected_item).find('.total').val(total);
+
             $(selected_item).removeClass('selected-item');
         }
 
-        var sub_total_all = parseInt($('#sub_total').val(), 10) + parseInt(sub_total, 10);
-        $('#sub_total').val(sub_total_all);
-        $('#sub_total_view').text(sub_total_all);
-
-        var discount = parseInt($('#discount').val(), 10) + parseInt(disc_rp, 10);
-        $('#discount').val(discount);
-        $('#discount_view').text(discount);
-
-        var total_all = parseInt($('#total').val(), 10) + parseInt(total, 10);
-        $('#total').val(total_all);
-        $('#total_view').text(total_all);
+        hitungTotal();
 
         // clear all
         $('#nama_barang').val('');
@@ -160,4 +158,26 @@
         var total = sub_total - disc_rp;
         $('#total_item').val(total);
     });
+
+    function hitungTotal()
+    {
+        var sub_total = 0;
+        var discount = 0;
+        var total = 0;
+        $('table#detail_purchase > tbody > tr').each(function (i, element) {
+            var row = $(element);
+            sub_total = parseInt(sub_total, 10) + parseInt(row.find('.sub_total').val(), 10);
+            discount = parseInt(discount, 10) + parseInt(row.find('.disc_rp').val(), 10);
+            total = parseInt(total, 10) + parseInt(row.find('.total').val(), 10);
+        });
+
+        $('#sub_total_all').val(sub_total);
+        $('#sub_total_view').text(sub_total);
+
+        $('#discount_all').val(discount);
+        $('#discount_view').text(discount);
+
+        $('#total_all').val(total);
+        $('#total_view').text(total);
+    }
 </script>

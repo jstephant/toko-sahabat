@@ -13,7 +13,7 @@ class EditPurchaseRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,24 @@ class EditPurchaseRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'purchase_date' => 'required',
+            'supplier'      => 'required',
+            'products'      => 'required|array|min:1',
+            'satuan'        => 'required|array|min:1',
+            'qty'           => 'required|array|min:1',
+            'price'         => 'required|array|min:1',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'purchase_date.required' => 'Tgl. Pembelian harus diisi',
+            'supplier.required'      => 'Supplier harus diisi',
+            'products.required'      => 'Detail pembelian harus diisi minimal 1',
+            'satuan.required'        => 'Satuan barang harus diisi',
+            'qty.required'           => 'Kuantitas barang harus diisi',
+            'price.required'         => 'Harga pembelian barang harus diisi',
         ];
     }
 }

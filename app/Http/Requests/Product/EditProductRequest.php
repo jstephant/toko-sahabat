@@ -27,7 +27,7 @@ class EditProductRequest extends FormRequest
             'code'          => 'required',
             'name'          => 'required',
             'sub_category'  => 'required',
-            'satuan'        => 'required',
+            'satuan'        => 'required|array|min:1',
             'hpp'           => 'nullable',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
@@ -40,6 +40,7 @@ class EditProductRequest extends FormRequest
             'name.required'         => 'Nama barang harus diisi',
             'sub_category.required' => 'Sub kategori harus diisi',
             'satuan.required'       => 'Satuan harus diisi',
+            'satuan.array'          => 'Satuan harus diisi minimal 1',
             'product_image.mime'    => 'Tipe image salah',
             'product_image.max'     => 'Ukuran file max: 2MB',
         ];

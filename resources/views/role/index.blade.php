@@ -49,5 +49,5 @@
     @include('role.script.index')
     @include('role.modal.create-edit')
     @include('role.script.create-edit')
-    {{-- @include('validation') --}}
+    @include('confirmation.delete')
 @endsection

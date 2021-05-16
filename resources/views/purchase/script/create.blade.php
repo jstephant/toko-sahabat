@@ -68,5 +68,10 @@
         var edit_item = $(this).closest('.edit-item')
         var row = $(edit_item).closest('tr');
         $(row).addClass('selected-item');
-    })
+    });
+
+    $(document).on('click', '.remove-item', function(){
+        var remove_item = $(this).closest('.remove-item')
+        var row = $(remove_item).closest('tr').remove();
+    });
 </script>

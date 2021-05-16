@@ -77,4 +77,14 @@ class RoleController extends Controller
 
         return redirect()->route('role.index')->with('success', 'Data berhasil diupdate');
     }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sRole->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('role.index')->with('success', 'Data berhasil dihapus');
+    }
 }

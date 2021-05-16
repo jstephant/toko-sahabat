@@ -50,4 +50,5 @@
 		</div>
 	</div>
     @include('supplier.script.index')
+    @include('confirmation.delete')
 @endsection

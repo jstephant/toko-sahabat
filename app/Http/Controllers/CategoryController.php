@@ -86,4 +86,14 @@ class CategoryController extends Controller
     {
         return $this->sCategory->getActive();
     }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sCategory->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('category.index')->with('success', 'Data berhasil dihapus');
+    }
 }

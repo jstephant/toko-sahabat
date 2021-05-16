@@ -70,7 +70,12 @@
                                             data-category-id="` + row.category_id + `"
                                             data-status="` + row.is_active + `">Edit
                                         </a>
-                                        <a class="dropdown-item" href="{{url('/sub-kategori/delete/` + row.id + `')}}">Delete</a>
+                                        <a class="dropdown-item text-danger" href="#"
+                                            data-toggle="modal"
+                                            data-target="#modal-confirm-delete"
+                                            data-id="` + row.id + `"
+                                            data-link="/sub-kategori/delete">Delete
+                                        </a>
 									</div>
 								</li>
 							</ul>

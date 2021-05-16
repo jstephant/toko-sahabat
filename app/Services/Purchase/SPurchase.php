@@ -103,7 +103,8 @@ class SPurchase implements IPurchase
                                 'created_user'    => function($q) { $q->select('id', 'name'); },
                                 'updated_user'    => function($q) { $q->select('id', 'name'); },
                             ])
-                          ->whereBetween('purchase_date', [$start_date, $end_date]);
+                          ->whereBetween('purchase_date', [$start_date, $end_date])
+                          ->where('status_id', 1);
         if($keyword)
         {
             $purchases = $purchases->where('purchase_number', 'like', '%'. $keyword .'%');

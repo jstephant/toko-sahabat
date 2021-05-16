@@ -87,4 +87,14 @@ class SatuanController extends Controller
 
         return redirect()->route('satuan.index')->with('success', 'Data berhasil diupdate');
     }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sSatuan->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('satuan.index')->with('success', 'Data berhasil dihapus');
+    }
 }

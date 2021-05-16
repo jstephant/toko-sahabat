@@ -174,4 +174,14 @@ class ProductController extends Controller
     {
         return $this->sProduct->findById($id);
     }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sProduct->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('product.index')->with('success', 'Data berhasil dihapus');
+    }
 }

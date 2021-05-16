@@ -79,10 +79,8 @@
                         if(row.restricted==0)
                         {
                             link_edit = `href="{{url('/user/edit/` + row.id + `')}}"`;
-                            link_inactive = `href="{{url('/user/delete/` + row.id + `')}}"`;
                         } else {
                             link_edit = `href="#"`;
-                            link_inactive = `href="#"`;
                         }
 						var content = `
 							<ul class="navbar-nav ml-lg-auto">
@@ -90,7 +88,12 @@
 									<a class="text-gray" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
 									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-primary_dropdown_1">
                                         <a class="dropdown-item" ` + link_edit + `>Edit</a>
-                                        <a class="dropdown-item" ` + link_inactive + `>Delete</a>
+                                        <a class="dropdown-item text-danger" href="#"
+                                            data-toggle="modal"
+                                            data-target="#modal-confirm-delete"
+                                            data-id="` + row.id + `"
+                                            data-link="/user/delete">Delete
+                                        </a>
 									</div>
 								</li>
 							</ul>

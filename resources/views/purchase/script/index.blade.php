@@ -27,6 +27,8 @@
                 type: "GET",
 				url: APP_URL + '/beli/list',
 				data: function(d) {
+                    d.start_date = $('#start_date').val();
+                    d.end_date = $('#end_date').val();
 					d.keyword = $('#searchactive').val();
 				}
 			},
@@ -112,7 +114,12 @@
 									<a class="text-gray" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
 									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-primary_dropdown_1">
                                         <a class="dropdown-item" href="{{url('/beli/edit/` + row.id + `')}}">Edit</a>
-                                        <a class="dropdown-item" href="{{url('/beli/delete/` + row.id + `')}}">Delete</a>
+                                        <a class="dropdown-item text-danger" href="#"
+                                            data-toggle="modal"
+                                            data-target="#modal-confirm-delete"
+                                            data-id="` + row.id + `"
+                                            data-link="/beli/delete">Delete
+                                        </a>
 									</div>
 								</li>
 							</ul>

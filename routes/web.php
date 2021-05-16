@@ -29,12 +29,14 @@ Route::prefix('user')->group(function () {
     Route::post('/create', [App\Http\Controllers\UserController::class, 'doCreate'])->name('user.create.post');
     Route::get('/edit/{id}', [App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
     Route::post('/edit', [App\Http\Controllers\UserController::class, 'doUpdate'])->name('user.edit.post');
+    Route::post('/delete/{id}', [App\Http\Controllers\UserController::class, 'doDelete'])->name('user.delete.post');
 });
 
 Route::prefix('role')->group(function () {
     Route::get('/', [App\Http\Controllers\RoleController::class, 'index'])->name('role.index');
     Route::post('/save', [App\Http\Controllers\RoleController::class, 'doSave'])->name('role.save.post');
     Route::get('/list', [App\Http\Controllers\RoleController::class, 'listRole'])->name('role.list');
+    Route::post('/delete/{id}', [App\Http\Controllers\RoleController::class, 'doDelete'])->name('role.delete.post');
 });
 
 Route::prefix('satuan')->group(function () {
@@ -42,6 +44,7 @@ Route::prefix('satuan')->group(function () {
     Route::post('/save', [App\Http\Controllers\SatuanController::class, 'doSave'])->name('satuan.save.post');
     Route::get('/list', [App\Http\Controllers\SatuanController::class, 'listSatuan'])->name('satuan.list');
     Route::get('/list-active', [App\Http\Controllers\SatuanController::class, 'listActive'])->name('satuan.list.active');
+    Route::post('/delete/{id}', [App\Http\Controllers\SatuanController::class, 'doDelete'])->name('satuan.delete.post');
 });
 
 Route::prefix('kategori')->group(function () {
@@ -49,12 +52,14 @@ Route::prefix('kategori')->group(function () {
     Route::post('/save', [App\Http\Controllers\CategoryController::class, 'doSave'])->name('category.save.post');
     Route::get('/list', [App\Http\Controllers\CategoryController::class, 'listCategory'])->name('category.list');
     Route::get('/active', [App\Http\Controllers\CategoryController::class, 'getActive'])->name('category.active');
+    Route::post('/delete/{id}', [App\Http\Controllers\CategoryController::class, 'doDelete'])->name('category.delete.post');
 });
 
 Route::prefix('sub-kategori')->group(function () {
     Route::get('/', [App\Http\Controllers\SubCategoryController::class, 'index'])->name('subcategory.index');
     Route::post('/save', [App\Http\Controllers\SubCategoryController::class, 'doSave'])->name('subcategory.save.post');
     Route::get('/list', [App\Http\Controllers\SubCategoryController::class, 'listSubCategory'])->name('subcategory.list');
+    Route::post('/delete/{id}', [App\Http\Controllers\SubCategoryController::class, 'doDelete'])->name('subcategory.delete.post');
 });
 
 Route::prefix('barang')->group(function () {
@@ -66,6 +71,7 @@ Route::prefix('barang')->group(function () {
     Route::post('/update', [App\Http\Controllers\ProductController::class, 'doUpdate'])->name('product.edit.post');
     Route::get('/list-active', [App\Http\Controllers\ProductController::class, 'listActiveProduct'])->name('product.list.active');
     Route::get('/findbyid/{id}', [App\Http\Controllers\ProductController::class, 'findById'])->name('product.findbyid');
+    Route::post('/delete/{id}', [App\Http\Controllers\ProductController::class, 'doDelete'])->name('product.delete.post');
 });
 
 Route::prefix('pelanggan')->group(function () {
@@ -75,6 +81,7 @@ Route::prefix('pelanggan')->group(function () {
     Route::get('/list', [App\Http\Controllers\CustomerController::class, 'listCustomer'])->name('customer.list');
     Route::get('/edit/{id}', [App\Http\Controllers\CustomerController::class, 'edit'])->name('customer.edit');
     Route::post('/update', [App\Http\Controllers\CustomerController::class, 'doUpdate'])->name('customer.edit.post');
+    Route::post('/delete/{id}', [App\Http\Controllers\CustomerController::class, 'doDelete'])->name('customer.delete.post');
 });
 
 Route::prefix('supplier')->group(function () {
@@ -85,6 +92,7 @@ Route::prefix('supplier')->group(function () {
     Route::get('/list-active', [App\Http\Controllers\SupplierController::class, 'listActive'])->name('supplier.list.active');
     Route::get('/edit/{id}', [App\Http\Controllers\SupplierController::class, 'edit'])->name('supplier.edit');
     Route::post('/update', [App\Http\Controllers\SupplierController::class, 'doUpdate'])->name('supplier.edit.post');
+    Route::post('/delete/{id}', [App\Http\Controllers\SupplierController::class, 'doDelete'])->name('supplier.delete.post');
 });
 
 Route::prefix('beli')->group(function () {
@@ -93,5 +101,7 @@ Route::prefix('beli')->group(function () {
     Route::post('/create', [App\Http\Controllers\PurchaseController::class, 'doCreate'])->name('purchase.create.post');
     Route::get('/list', [App\Http\Controllers\PurchaseController::class, 'listPurchase'])->name('purchase.list');
     Route::get('/edit/{id}', [App\Http\Controllers\PurchaseController::class, 'edit'])->name('purchase.edit');
+    Route::get('/list-detail/{id}', [App\Http\Controllers\PurchaseController::class, 'listDetail'])->name('purchase.list.detail');
     Route::post('/update', [App\Http\Controllers\PurchaseController::class, 'doUpdate'])->name('purchase.edit.post');
+    Route::post('/delete/{id}', [App\Http\Controllers\PurchaseController::class, 'doDelete'])->name('purchase.delete.post');
 });

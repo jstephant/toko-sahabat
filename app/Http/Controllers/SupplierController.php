@@ -122,4 +122,14 @@ class SupplierController extends Controller
         $supplier = $this->sSupplier->getActive();
         return response()->json($supplier);
     }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sSupplier->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('supplier.index')->with('success', 'Data berhasil dihapus');
+    }
 }

@@ -87,7 +87,16 @@ class SubCategoryController extends Controller
             }
         }
 
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('category.index');
+        return redirect()->route('category.index')->with('success', 'Data berhasil diupdate');
+    }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sSubCategory->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('subcategory.index')->with('success', 'Data berhasil dihapus');
     }
 }

@@ -61,10 +61,8 @@
                         if(row.restricted==0)
                         {
                             link_edit = `href="{{url('/role/edit/` + row.id + `')}}"`;
-                            link_inactive = `href="{{url('/role/delete/` + row.id + `')}}"`;
                         } else {
                             link_edit = `href="#"`;
-                            link_inactive = `href="#"`;
                         }
 						var content = `
 							<ul class="navbar-nav ml-lg-auto">
@@ -78,8 +76,13 @@
                                             data-id="` + row.id + `"
                                             data-name="` + row.name + `"
                                             data-status="` + row.is_active + `">Edit
+                                        </a>z
+                                        <a class="dropdown-item text-danger" href="#"
+                                            data-toggle="modal"
+                                            data-target="#modal-confirm-delete"
+                                            data-id="` + row.id + `"
+                                            data-link="/role/delete">Delete
                                         </a>
-                                        <a class="dropdown-item" ` + link_inactive + `>Delete</a>
 									</div>
 								</li>
 							</ul>

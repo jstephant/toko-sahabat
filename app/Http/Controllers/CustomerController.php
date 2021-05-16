@@ -114,4 +114,14 @@ class CustomerController extends Controller
 
         return redirect()->route('customer.index')->with('success', 'Data berhasil diupdate');
     }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sCustomer->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('customer.index')->with('success', 'Data berhasil dihapus');
+    }
 }

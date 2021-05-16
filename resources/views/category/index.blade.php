@@ -89,4 +89,6 @@
     @include('sub-category.modal.sub-create-edit')
     @include('sub-category.script.sub-create-edit')
     @include('sub-category.script.index')
+
+    @include('confirmation.delete')
 @endsection

@@ -51,4 +51,5 @@
     @include('satuan.script.index')
     @include('satuan.modal.create-edit')
     @include('satuan.script.create-edit')
+    @include('confirmation.delete')
 @endsection

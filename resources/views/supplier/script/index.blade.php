@@ -90,7 +90,12 @@
 									<a class="text-gray" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
 									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-primary_dropdown_1">
                                         <a class="dropdown-item" href="{{url('/supplier/edit/` + row.id + `')}}">Edit</a>
-                                        <a class="dropdown-item" href="{{url('/supplier/delete/` + row.id + `')}}">Delete</a>
+                                        <a class="dropdown-item text-danger" href="#"
+                                            data-toggle="modal"
+                                            data-target="#modal-confirm-delete"
+                                            data-id="` + row.id + `"
+                                            data-link="/supplier/delete">Delete
+                                        </a>
 									</div>
 								</li>
 							</ul>

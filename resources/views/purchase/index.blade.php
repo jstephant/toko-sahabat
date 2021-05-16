@@ -49,7 +49,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="table-responsive">
-									<table class="table table-striped display responsive nowrap dataTable" id="purchase_table" width="100%">
+									<table class="table table-striped align-items-center" id="purchase_table" width="100%">
 										<thead class="thead-light">
 											<tr>
 												<th scope="col">No</th>
@@ -73,4 +73,5 @@
 		</div>
 	</div>
     @include('purchase.script.index')
+    @include('confirmation.delete')
 @endsection
