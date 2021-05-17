@@ -56,6 +56,16 @@
                 {
 					orderable: false,
 					render: function(data, type, row, meta) {
+                        var delete_link = "";
+                        if(row.is_active==1)
+                        {
+                            delete_link = `<a class="dropdown-item text-danger" href="#"
+                                                data-toggle="modal"
+                                                data-target="#modal-confirm-delete"
+                                                data-id="` + row.id + `"
+                                                data-link="/sub-kategori/delete">Delete
+                                            </a>`;
+                        }
 						var content = `
                             <ul class="navbar-nav ml-lg-auto">
 								<li class="nav-item dropdown">
@@ -70,12 +80,7 @@
                                             data-category-id="` + row.category_id + `"
                                             data-status="` + row.is_active + `">Edit
                                         </a>
-                                        <a class="dropdown-item text-danger" href="#"
-                                            data-toggle="modal"
-                                            data-target="#modal-confirm-delete"
-                                            data-id="` + row.id + `"
-                                            data-link="/sub-kategori/delete">Delete
-                                        </a>
+                                        ` + delete_link + `
 									</div>
 								</li>
 							</ul>

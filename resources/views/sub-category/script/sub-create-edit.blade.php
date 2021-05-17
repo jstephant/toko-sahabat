@@ -14,6 +14,7 @@
         });
 
         $('#data-loader').hide();
+        $('.alert_error').hide();
 		$('#modal-sub-create-edit').on('show.bs.modal', function(e) {
             $('#category2, #sub_status').select2({
                 dropdownParent: $('#modal-sub-create-edit'),
@@ -69,7 +70,14 @@
                 sub_mode: $('#sub_mode').val()
             },
             success: function (response) {
-                location.reload();
+                if (response.status==false) {
+                    $('.error-msg').text(response.message);
+                    $('.alert_error').show();
+                    window.setTimeout(function() {
+                        $('.alert_error').hide();
+                    }, 3000);
+                } else
+                    location.reload();
             },
             error: function (response) {
                 var errors = response.responseJSON;

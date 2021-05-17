@@ -153,7 +153,7 @@ class SCategory implements ICategory
 
         try {
             DB::beginTransaction();
-            $sub_category = SubCategory::where('category_id', $category_id)->update(['is_active', 0]);
+            $sub_category = SubCategory::where('category_id', $category_id)->update(['is_active' => 0]);
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';

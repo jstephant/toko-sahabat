@@ -103,18 +103,23 @@
                 {
 					orderable: false,
 					render: function(data, type, row, meta) {
+                        var delete_link = "";
+                        if(row.is_active==1)
+                        {
+                            delete_link = `<a class="dropdown-item text-danger" href="#"
+                                                data-toggle="modal"
+                                                data-target="#modal-confirm-delete"
+                                                data-id="` + row.id + `"
+                                                data-link="/barang/delete">Delete
+                                            </a>`;
+                        }
 						var content = `
 							<ul class="navbar-nav ml-lg-auto">
 								<li class="nav-item dropdown">
 									<a class="text-gray" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
 									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-primary_dropdown_1">
                                         <a class="dropdown-item" href="{{url('/barang/edit/` + row.id + `')}}">Edit</a>
-                                        <a class="dropdown-item text-danger" href="#"
-                                            data-toggle="modal"
-                                            data-target="#modal-confirm-delete"
-                                            data-id="` + row.id + `"
-                                            data-link="/barang/delete">Delete
-                                        </a>
+                                        ` + delete_link + `
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="{{url('/barang/set-hpp/` + row.id + `')}}">Set HPP</a>
                                         <a class="dropdown-item" href="{{url('/barang/set-pricelist/` + row.id + `')}}">Set Price List</a>

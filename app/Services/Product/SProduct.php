@@ -95,7 +95,9 @@ class SProduct implements IProduct
 
     public function findById($id)
     {
-        return $this->product->with(['product_sub_category.category', 'product_satuan.satuan'])->where('id', $id)->first();
+        $product = $this->product->with(['product_sub_category.category', 'product_satuan.satuan'])->where('id', $id)->first();
+        $product->image_url = ($product->image_name) ? url('images/product/'. $product->image_name) : url('images/product/default.png');
+        return $product;
     }
 
     public function getActive($keyword=null)

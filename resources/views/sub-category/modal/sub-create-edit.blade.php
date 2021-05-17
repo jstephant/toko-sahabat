@@ -12,6 +12,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="row  alert_error">
+                    <div class="col-md-12">
+                        @include('alert.alert-modal')
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-xs-12">
                         <div class="form-group">
@@ -46,8 +51,8 @@
             <div class="modal-footer justify-content-center">
                 <input type="hidden" id="sub_category_id" name="sub_category_id">
                 <input type="hidden" id="sub_mode" name="sub_mode">
-                <button type="button" class="btn btn-link" data-dismiss="modal" id="btn_cancel">Batal</button>
-                <button type="button" class="btn btn-facebook" id="save" name="save" onclick="storeDataSubCategory()">Simpan</button>
+                <button type="button" class="btn btn-link btn-sm" data-dismiss="modal" id="btn_cancel">Batal</button>
+                <button type="button" class="btn btn-facebook btn-sm" id="save" name="save" onclick="storeDataSubCategory()">Simpan</button>
             </div>
 		</div>
 	</div>

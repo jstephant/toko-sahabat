@@ -46,6 +46,11 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
+        $data = array(
+            'status'  => true,
+            'message' => '',
+        );
+
         $mode = $request->mode;
         $category_id = $request->category_id;
         $name = $request->name;
@@ -60,8 +65,9 @@ class CategoryController extends Controller
             $created = $this->sCategory->create($input);
             if(!$created['status'])
             {
-                alert()->error('Error', $created['message']);
-                return redirect()->back()->withInput();
+                $data['status'] = $created['status'];
+                $data['message'] = $created['message'];
+                return response()->json($data, 200);
             }
         } elseif($mode=='edit')
         {
@@ -73,13 +79,13 @@ class CategoryController extends Controller
             $updated = $this->sCategory->update($category_id, $input);
             if(!$updated['status'])
             {
-                alert()->error('Error', $updated['message']);
-                return redirect()->back()->withInput();
+                $data['status'] = $updated['status'];
+                $data['message'] = $updated['message'];
+                return response()->json($data, 200);
             }
         }
-
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('category.index');
+        $request->session()->put('success', 'Data berhasil diupdate');
+        return response()->json($data, 200);
     }
 
     public function getActive()

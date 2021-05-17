@@ -52,6 +52,11 @@ class SubCategoryController extends Controller
     {
         $validated = $request->validated();
 
+        $data = array(
+            'status'  => true,
+            'message' => ''
+        );
+
         $mode = $request->sub_mode;
         $sub_category_id = $request->sub_category_id;
         $category_id = $request->category2;
@@ -68,8 +73,9 @@ class SubCategoryController extends Controller
             $created = $this->sSubCategory->create($input);
             if(!$created['status'])
             {
-                alert()->error('Error', $created['message']);
-                return redirect()->back()->withInput();
+                $data['status'] = $created['status'];
+                $data['message'] = $created['message'];
+                return response()->json($data, 200);
             }
         } elseif($mode=='edit')
         {
@@ -82,12 +88,15 @@ class SubCategoryController extends Controller
             $updated = $this->sSubCategory->update($sub_category_id, $input);
             if(!$updated['status'])
             {
-                alert()->error('Error', $updated['message']);
-                return redirect()->back()->withInput();
+                return $updated;
+                $data['status'] = $updated['status'];
+                $data['message'] = $updated['message'];
+                return response()->json($data, 200);
             }
         }
 
-        return redirect()->route('category.index')->with('success', 'Data berhasil diupdate');
+        $request->session()->put('success', 'Data berhasil diupdate');
+        return response()->json($data, 200);
     }
 
     public function doDelete($id)
@@ -97,6 +106,6 @@ class SubCategoryController extends Controller
         {
             return redirect()->back()->with('error', $deleted['message']);
         }
-        return redirect()->route('subcategory.index')->with('success', 'Data berhasil dihapus');
+        return redirect()->route('category.index')->with('success', 'Data berhasil dihapus');
     }
 }

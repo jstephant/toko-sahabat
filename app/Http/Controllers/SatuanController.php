@@ -48,6 +48,11 @@ class SatuanController extends Controller
     {
         $validated = $request->validated();
 
+        $data = array(
+            'status'  => true,
+            'message' => ''
+        );
+
         $mode = $request->mode;
         $satuan_id = $request->satuan_id;
         $code = $request->code;
@@ -66,7 +71,9 @@ class SatuanController extends Controller
             $created = $this->sSatuan->create($input);
             if(!$created['status'])
             {
-                return redirect()->back()->with('error', $created['message']);
+                $data['status'] = $created['status'];
+                $data['message'] = $created['message'];
+                return response()->json($data, 200);
             }
         } elseif($mode=='edit')
         {
@@ -81,11 +88,14 @@ class SatuanController extends Controller
             $updated = $this->sSatuan->update($satuan_id, $input);
             if(!$updated['status'])
             {
-                return redirect()->back()->with('error', $updated['message']);
+                $data['status'] = $updated['status'];
+                $data['message'] = $updated['message'];
+                return response()->json($data, 200);
             }
         }
 
-        return redirect()->route('satuan.index')->with('success', 'Data berhasil diupdate');
+        $request->session()->put('success', 'Data berhasil diupdate');
+        return response()->json($data, 200);
     }
 
     public function doDelete($id)

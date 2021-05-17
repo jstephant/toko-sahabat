@@ -1,6 +1,7 @@
 <script>
     $(document).ready(function () {
         $('#data-loader').hide();
+        $('.alert_error').hide();
 		$('#modal-create-edit').on('show.bs.modal', function(e) {
             $('#status').select2({
                 dropdownParent: $('#modal-create-edit'),
@@ -68,7 +69,14 @@
                 mode: mode
             },
             success: function (response) {
-                location.reload();
+                if (response.status==false) {
+                    $('.error-msg').text(response.message);
+                    $('.alert_error').show();
+                    window.setTimeout(function() {
+                        $('.alert_error').hide();
+                    }, 3000);
+                } else
+                    location.reload();
             },
             error: function (response) {
                 var errors = response.responseJSON;

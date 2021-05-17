@@ -67,7 +67,6 @@ class CustomerController extends Controller
         $created = $this->sCustomer->create($input);
         if(!$created['status'])
         {
-            alert()->error('Error', );
             return redirect()->back()->with('error', $created['message']);
         }
 

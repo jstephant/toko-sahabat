@@ -50,4 +50,5 @@
 		</div>
 	</div>
     @include('product.script.index')
+    @include('confirmation.delete')
 @endsection

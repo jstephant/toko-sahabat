@@ -54,7 +54,7 @@
                         var content = `
                             <label class="custom-toggle custom-toggle-success">
                                 <input type="checkbox" disabled ` + is_active + `>
-                                <span class="custom-toggle-slider rounded-circle data-label-off="No" data-label-on="Yes"></span>
+                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
                             </label>`;
 						return content;
 					}
@@ -68,6 +68,16 @@
                 {
 					orderable: false,
 					render: function(data, type, row, meta) {
+                        var delete_link = "";
+                        if(row.is_active==1)
+                        {
+                            delete_link = `<a class="dropdown-item text-danger" href="#"
+                                                data-toggle="modal"
+                                                data-target="#modal-confirm-delete"
+                                                data-id="` + row.id + `"
+                                                data-link="/satuan/delete">Delete
+                                            </a>`;
+                        }
 						var content = `
                             <ul class="navbar-nav ml-lg-auto">
 								<li class="nav-item dropdown">
@@ -83,12 +93,7 @@
                                             data-qty="` + row.qty + `"
                                             data-status="` + row.is_active + `">Edit
                                         </a>
-                                        <a class="dropdown-item text-danger" href="#"
-                                            data-toggle="modal"
-                                            data-target="#modal-confirm-delete"
-                                            data-id="` + row.id + `"
-                                            data-link="/satuan/delete">Delete
-                                        </a>
+                                        ` + delete_link + `
 									</div>
 								</li>
 							</ul>

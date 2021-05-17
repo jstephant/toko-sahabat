@@ -64,6 +64,16 @@
                         } else {
                             link_edit = `href="#"`;
                         }
+                        var delete_link = "";
+                        if(row.is_active==1)
+                        {
+                            delete_link = `<a class="dropdown-item text-danger" href="#"
+                                                data-toggle="modal"
+                                                data-target="#modal-confirm-delete"
+                                                data-id="` + row.id + `"
+                                                data-link="/role/delete">Delete
+                                            </a>`;
+                        }
 						var content = `
 							<ul class="navbar-nav ml-lg-auto">
 								<li class="nav-item dropdown">
@@ -76,13 +86,8 @@
                                             data-id="` + row.id + `"
                                             data-name="` + row.name + `"
                                             data-status="` + row.is_active + `">Edit
-                                        </a>z
-                                        <a class="dropdown-item text-danger" href="#"
-                                            data-toggle="modal"
-                                            data-target="#modal-confirm-delete"
-                                            data-id="` + row.id + `"
-                                            data-link="/role/delete">Delete
                                         </a>
+                                        ` + delete_link + `
 									</div>
 								</li>
 							</ul>

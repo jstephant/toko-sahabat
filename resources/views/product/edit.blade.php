@@ -69,7 +69,7 @@
                                                             @if ($product->product_satuan)
                                                                 @foreach ($product->product_satuan as $item2)
                                                                     {{ $selected = '' }}
-                                                                    @if ($item->id==$item2->id)
+                                                                    @if ($item->id==$item2->satuan_id)
                                                                         {{ $selected = 'selected' }}
                                                                         @break
                                                                     @endif
