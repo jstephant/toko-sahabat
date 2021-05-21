@@ -92,9 +92,16 @@ class SSupplier implements ISupplier
         return $this->supplier->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->supplier->where('is_active', 1)->orderby('name', 'asc')->get();
+        $supplier = $this->supplier->where('is_active', 1);
+
+        if($keyword)
+        {
+            $supplier = $supplier->where('name', 'like', '%'. $keyword .'%');
+        }
+
+        return $supplier->orderby('name', 'asc')->get();
     }
 
     public function getActiveByName($name)

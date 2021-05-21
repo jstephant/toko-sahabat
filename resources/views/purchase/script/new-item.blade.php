@@ -117,7 +117,17 @@
             $(selected_item).removeClass('selected-item');
         }
 
-        hitungTotal();
+        var elements = ['.sub_total', '.disc_rp', '.total'];
+        var hasil = hitungTotal('#detail_purchase', elements);
+
+        $('#sub_total_all').val(hasil[0]);
+        $('#sub_total_view').text(hasil[0]);
+
+        $('#discount_all').val(hasil[1]);
+        $('#discount_view').text(hasil[1]);
+
+        $('#total_all').val(hasil[2]);
+        $('#total_view').text(hasil[2]);
 
         // clear all
         $('#nama_barang').val('');
@@ -135,49 +145,26 @@
     });
 
     $(document).on('change', '#qty_item, #price_item, #disc_rp_item', function () {
-        var qty = $('#qty_item').val();
-        var price = $('#price_item').val();
-        var sub_total = qty * price;
+        var sub_total = hitungSubTotalItem($('#qty_item').val(), $('#price_item').val());
         $('#sub_total_item').val(sub_total);
-        var disc_rp = $('#disc_rp_item').val();
-        var total = sub_total - disc_rp;
+
+        var total = hitungTotalItem(sub_total, $('#disc_rp_item').val());
         $('#total_item').val(total);
     });
 
     $(document).on('change', '#disc_pctg_item', function () {
-        var qty = $('#qty_item').val();
-        var price = $('#price_item').val();
-        var sub_total = qty * price;
+        var sub_total = hitungSubTotalItem($('#qty_item').val(), $('#price_item').val());
         $('#sub_total_item').val(sub_total);
+
         var disc_pctg = $('#disc_pctg_item').val();
         if(disc_pctg>0)
             $('#disc_rp_item').attr('readonly', true);
         else $('#disc_rp_item').attr('readonly', false);
-        var disc_rp = (disc_pctg / 100) * sub_total;
+
+        var disc_rp = hitungDiscPctg(sub_total, disc_pctg);
         $('#disc_rp_item').val(disc_rp);
-        var total = sub_total - disc_rp;
+
+        var total = hitungTotalItem(sub_total, disc_rp);
         $('#total_item').val(total);
     });
-
-    function hitungTotal()
-    {
-        var sub_total = 0;
-        var discount = 0;
-        var total = 0;
-        $('table#detail_purchase > tbody > tr').each(function (i, element) {
-            var row = $(element);
-            sub_total = parseInt(sub_total, 10) + parseInt(row.find('.sub_total').val(), 10);
-            discount = parseInt(discount, 10) + parseInt(row.find('.disc_rp').val(), 10);
-            total = parseInt(total, 10) + parseInt(row.find('.total').val(), 10);
-        });
-
-        $('#sub_total_all').val(sub_total);
-        $('#sub_total_view').text(sub_total);
-
-        $('#discount_all').val(discount);
-        $('#discount_view').text(discount);
-
-        $('#total_all').val(total);
-        $('#total_view').text(total);
-    }
 </script>

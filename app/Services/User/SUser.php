@@ -152,9 +152,19 @@ class SUser implements IUser
         return $this->users->where('email', $email)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->users->where('is_active', 1)->where('restricted', 0)->select('id', 'name', 'user_name', 'email')->get();
+        $users = $this->users
+                      ->where('is_active', 1)
+                      ->where('restricted', 0)
+                      ->select('id', 'name', 'user_name', 'email');
+
+        if($keyword)
+        {
+            $users = $users->where('name', 'like', '%'.$keyword.'%');
+        }
+
+        return $users->orderby('name', 'asc')->get();
     }
 
     public function list($keyword, $start, $length, $order)

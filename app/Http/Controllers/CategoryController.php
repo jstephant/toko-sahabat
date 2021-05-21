@@ -88,9 +88,9 @@ class CategoryController extends Controller
         return response()->json($data, 200);
     }
 
-    public function getActive()
+    public function listActive(Request $request)
     {
-        return $this->sCategory->getActive();
+        return $this->sCategory->getActive($request->keyword);
     }
 
     public function doDelete($id)

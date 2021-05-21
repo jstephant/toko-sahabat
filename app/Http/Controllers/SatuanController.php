@@ -38,10 +38,9 @@ class SatuanController extends Controller
         return $satuan;
     }
 
-    public function listActive()
+    public function listActive(Request $request)
     {
-        $satuan = $this->sSatuan->getActive();
-        return response()->json($satuan, 200);
+        return $this->sSatuan->getActive($request->q);
     }
 
     public function doSave(SatuanRequest $request)
@@ -94,7 +93,7 @@ class SatuanController extends Controller
             }
         }
 
-        $request->session()->put('success', 'Data berhasil diupdate');
+        $request->session()->flash('success', 'Data berhasil diupdate');
         return response()->json($data, 200);
     }
 

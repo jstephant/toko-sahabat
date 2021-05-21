@@ -34,7 +34,7 @@
 												<th scope="col">Nama</th>
 												<th scope="col">No. Telp</th>
 												<th scope="col">Alamat</th>
-												<th scope="col" width="5%">Active</th>
+												<th scope="col" width="5%">Status</th>
 												<th scope="col" width="10%">Tgl. Update</th>
 												<th scope="col" width="5%"></th>
 											</tr>

@@ -35,7 +35,7 @@
 												<th scope="col">Phone</th>
                                                 <th scope="col">Email</th>
 												<th scope="col">Alamat</th>
-												<th scope="col" width="5%">Active</th>
+												<th scope="col" width="5%">Status</th>
 												<th scope="col" width="10%">Tgl. Update</th>
 												<th scope="col" width="5%"></th>
 											</tr>

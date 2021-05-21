@@ -92,9 +92,16 @@ class SSatuan implements ISatuan
         return $this->satuan->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->satuan->where('is_active', 1)->orderby('name', 'asc')->get();
+        $satuan = $this->satuan->where('is_active', 1);
+
+        if($keyword)
+        {
+            $satuan = $satuan->where('name', 'like', '%'. $keyword .'%');
+        }
+
+        return $satuan->orderby('name', 'asc')->get();
     }
 
     public function listSatuan($keyword, $start, $length, $order)

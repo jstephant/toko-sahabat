@@ -117,10 +117,9 @@ class SupplierController extends Controller
         return redirect()->route('supplier.index')->with('success', 'Data berhasil diupdate');
     }
 
-    public function listActive()
+    public function listActive(Request $request)
     {
-        $supplier = $this->sSupplier->getActive();
-        return response()->json($supplier);
+        return $this->sSupplier->getActive($request->q);
     }
 
     public function doDelete($id)

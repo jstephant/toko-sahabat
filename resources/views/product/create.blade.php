@@ -62,7 +62,7 @@
                                                     <select id="satuan" name="satuan[]" class="form-control @error('satuan') 'is-invalid' @enderror" multiple required>
                                                         <option value=""></option>
                                                         @foreach ($satuan as $item )
-                                                            <option value="{{ $item->id }}">{{ $item->name . ' ('.$item->code.')' }}</option>
+                                                            <option value="{{ $item->id }}" {{ in_array($item->id, old('satuan', [])) ? 'selected' : '' }}>{{ $item->name . ' ('.$item->code.')' }}</option>
                                                         @endforeach
                                                     </select>
                                                     @error('satuan')
@@ -93,6 +93,65 @@
                                                         <label class="custom-file-label" for="product_image">Select file</label>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form-label-sm text-uppercase display-4">Daftar Harga Jual</label>
+                                                    <div class="card shadow">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label for="active_at" class="col-form-label-sm text-uppercase display-4">Tgl. Berlaku *</label>
+                                                                        <input type="text" class="form-control flatpickr flatpickr-input @error('active_at') 'is-invalid' @enderror" id="active_at" name="active_at" value="{{ old('active_at') }}" required>
+                                                                        @error('active_at')
+                                                                            <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-bordered align-items-center" id="detail_price_list" width="100%">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th scope="col">Satuan</th>
+                                                                                    <th scope="col">Harga</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @if(!is_null(old('satuan')))
+                                                                                    @foreach (old('satuan') as $i => $item)
+                                                                                        <tr>
+                                                                                            <td><span class="x1">{{ old('satuan_name.'.$i) }}</span></td>
+                                                                                            <td>
+                                                                                                <div class="form-group">
+                                                                                                    <input type="number" name="price_list[]" class="form-control price_list @error('price_list.'.$i) 'is-invalid' @enderror" autocomplete="off" value="{{ old('price_list.'.$i) }}" required>
+                                                                                                    @error('price_list.'.$i) <div class="alert alert-danger p-2 mt-2">{{ $message }}</div> @enderror
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <input type="hidden" name="satuan_id[]" class="satuan" value="{{ old('satuan_id.'.$i) }}">
+                                                                                            <input type="hidden" name="satuan_name[]" class="satuan" value="{{ old('satuan_name.'.$i) }}">
+                                                                                        </tr>
+                                                                                    @endforeach
+
+                                                                                    <input type="hidden" id="idx_price_list" value="{{ $i+1 }}">
+                                                                                @else
+                                                                                    <input type="hidden" id="idx_price_list" value="0">
+                                                                                @endif
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>

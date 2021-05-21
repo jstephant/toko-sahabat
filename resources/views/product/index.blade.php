@@ -35,7 +35,7 @@
                                                 <th scope="col">HPP (Rp)</th>
                                                 <th scope="col">Satuan</th>
                                                 <th scope="col">Barcode</th>
-												<th scope="col">Active</th>
+												<th scope="col">Status</th>
 												<th scope="col">Tgl. Update</th>
 												<th scope="col"></th>
 											</tr>

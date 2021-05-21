@@ -92,9 +92,14 @@ class SCustomer implements ICustomer
         return $this->customer->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->customer->where('is_active', 1)->get();
+        $customer = $this->customer->where('is_active', 1);
+        if($keyword)
+        {
+            $customer = $customer->where('name', 'like', '%'.$keyword.'%');
+        }
+        return $customer->get();
     }
 
     public function getActiveByName($name)

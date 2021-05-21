@@ -85,7 +85,7 @@ class SGlobal implements IGlobal
         })->save($destinationPath.'/'.$new_name);
 
         $destinationPath = public_path('images/'.$destFolder);
-        $img->resize(700, 700, function($constraint) {
+        $img->resize(1024, 760, function($constraint) {
             $constraint->aspectRatio();
         })->save($destinationPath.'/'.$new_name);
 

@@ -109,8 +109,7 @@ class SProduct implements IProduct
                                  ->orwhere('name', 'like', '%'.$keyword.'%')
                                  ->orwhere('barcode', 'like', '%'.$keyword.'%');
         }
-        $products = $products->get();
-        return $products;
+        return $products->get();
     }
 
     public function listProduct($keyword, $start, $length, $order)

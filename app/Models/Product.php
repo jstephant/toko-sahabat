@@ -20,6 +20,11 @@ class Product extends Model
         return $this->hasMany(ProductSatuan::class, 'product_id', 'id');
     }
 
+    public function product_price_list()
+    {
+        return $this->hasMany(ProductPriceList::class, 'product_id', 'id');
+    }
+
     public function created_user()
     {
         return $this->belongsTo(Users::class, 'created_by');
@@ -28,11 +33,6 @@ class Product extends Model
     public function updated_user()
     {
         return $this->belongsTo(Users::class, 'updated_by');
-    }
-
-    public function product_price_list()
-    {
-        return $this->hasMany(ProductPriceList::class, 'product_id', 'id');
     }
 
     public function getCreatedAtAttribute($date)

@@ -2,7 +2,7 @@
     $(document).ready(function () {
         $.ajax({
             type: "GET",
-            url: APP_URL + '/kategori/active',
+            url: APP_URL + '/kategori/list-active',
             success: function (response) {
                 $('#category2').find('option').remove();
                 var content = '<option value=""></option>';

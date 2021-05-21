@@ -27,9 +27,11 @@ class EditProductRequest extends FormRequest
             'code'          => 'required',
             'name'          => 'required',
             'sub_category'  => 'required',
-            'satuan'        => 'required|array|min:1',
+            'satuan'        => 'present|array',
             'hpp'           => 'nullable',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'active_at'     => 'required',
+            'price_list'    => 'present|array',
         ];
     }
 
@@ -39,10 +41,11 @@ class EditProductRequest extends FormRequest
             'code.required'         => 'Kode barang harus diisi',
             'name.required'         => 'Nama barang harus diisi',
             'sub_category.required' => 'Sub kategori harus diisi',
-            'satuan.required'       => 'Satuan harus diisi',
-            'satuan.array'          => 'Satuan harus diisi minimal 1',
+            'satuan.present'        => 'Satuan harus diisi',
             'product_image.mime'    => 'Tipe image salah',
             'product_image.max'     => 'Ukuran file max: 2MB',
+            'active_at.required'    => 'Tanggal berlaku harus diisi',
+            'price_list.present'    => 'Harga jual barang harus diisi',
         ];
     }
 }

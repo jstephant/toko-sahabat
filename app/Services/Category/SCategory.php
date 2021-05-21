@@ -101,9 +101,14 @@ class SCategory implements ICategory
         return $this->category->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->category->where('is_active', 1)->get();
+        $category = $this->category->where('is_active', 1);
+        if($keyword)
+        {
+            $category = $category->where('name', 'like', '%'.$keyword.'%');
+        }
+        return $category->get();
     }
 
     public function listCategory($keyword, $start, $length, $order)

@@ -100,7 +100,7 @@ class SSubCategory implements ISubCategory
             $sub_category = $sub_category->where('name', 'like', '%'.$keyword.'%');
         }
 
-        return $sub_category->get();
+        return $sub_category->orderby('name', 'asc')->get();
     }
 
     public function listSubCategory($category, $keyword, $start, $length, $order)

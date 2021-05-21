@@ -55,13 +55,9 @@
                 {
 					orderable: false,
 					render: function(data, type, row, meta) {
-                        var is_active = "";
-                        if(row.is_active==1) is_active = "checked";
-                        var content = `
-                            <label class="custom-toggle custom-toggle-success">
-                                <input type="checkbox" disabled ` + is_active + `>
-                                <span class="custom-toggle-slider rounded-circle data-label-off="No" data-label-on="Yes""></span>
-                            </label>`;
+                        if(row.is_active==1)
+                            var content = `<small class="badge badge-success badge-md">Aktif</small>`;
+                        else var content = `<small class="badge badge-danger badge-md">Tidak Aktif</small>`;
 						return content;
 					}
 				},

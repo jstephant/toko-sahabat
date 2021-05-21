@@ -51,7 +51,7 @@ Route::prefix('kategori')->group(function () {
     Route::get('/', [App\Http\Controllers\CategoryController::class, 'index'])->name('category.index');
     Route::post('/save', [App\Http\Controllers\CategoryController::class, 'doSave'])->name('category.save.post');
     Route::get('/list', [App\Http\Controllers\CategoryController::class, 'listCategory'])->name('category.list');
-    Route::get('/active', [App\Http\Controllers\CategoryController::class, 'getActive'])->name('category.active');
+    Route::get('/list-active', [App\Http\Controllers\CategoryController::class, 'listActive'])->name('category.active');
     Route::post('/delete/{id}', [App\Http\Controllers\CategoryController::class, 'doDelete'])->name('category.delete.post');
 });
 
@@ -60,6 +60,7 @@ Route::prefix('sub-kategori')->group(function () {
     Route::post('/save', [App\Http\Controllers\SubCategoryController::class, 'doSave'])->name('subcategory.save.post');
     Route::get('/list', [App\Http\Controllers\SubCategoryController::class, 'listSubCategory'])->name('subcategory.list');
     Route::post('/delete/{id}', [App\Http\Controllers\SubCategoryController::class, 'doDelete'])->name('subcategory.delete.post');
+    Route::get('/list-active', [App\Http\Controllers\SubCategoryController::class, 'listActive'])->name('subcategory.list.active');
 });
 
 Route::prefix('barang')->group(function () {
@@ -69,7 +70,7 @@ Route::prefix('barang')->group(function () {
     Route::get('/list', [App\Http\Controllers\ProductController::class, 'listProduct'])->name('product.list');
     Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('product.edit');
     Route::post('/update', [App\Http\Controllers\ProductController::class, 'doUpdate'])->name('product.edit.post');
-    Route::get('/list-active', [App\Http\Controllers\ProductController::class, 'listActiveProduct'])->name('product.list.active');
+    Route::get('/list-active', [App\Http\Controllers\ProductController::class, 'listActive'])->name('product.list.active');
     Route::get('/findbyid/{id}', [App\Http\Controllers\ProductController::class, 'findById'])->name('product.findbyid');
     Route::post('/delete/{id}', [App\Http\Controllers\ProductController::class, 'doDelete'])->name('product.delete.post');
 });
@@ -105,3 +106,5 @@ Route::prefix('beli')->group(function () {
     Route::post('/update', [App\Http\Controllers\PurchaseController::class, 'doUpdate'])->name('purchase.edit.post');
     Route::post('/delete/{id}', [App\Http\Controllers\PurchaseController::class, 'doDelete'])->name('purchase.delete.post');
 });
+
+Route::get('clear/session/{key}', [App\Http\Controllers\Controller::class, 'clearSession']);

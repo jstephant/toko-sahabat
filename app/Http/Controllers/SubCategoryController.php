@@ -108,4 +108,9 @@ class SubCategoryController extends Controller
         }
         return redirect()->route('category.index')->with('success', 'Data berhasil dihapus');
     }
+
+    public function listActive(Request $request)
+    {
+        return $this->sSubCategory->getActive($request->q);
+    }
 }

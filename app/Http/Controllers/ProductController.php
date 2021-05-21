@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\CreateProductRequest;
 use App\Http\Requests\Product\EditProductRequest;
+use App\Services\PriceList\SPriceList;
 use App\Services\Product\SProduct;
 use App\Services\Satuan\SSatuan;
 use App\Services\SGlobal;
@@ -16,13 +17,21 @@ class ProductController extends Controller
     private $sProduct;
     private $sSubCategory;
     private $sSatuan;
+    private $sPriceList;
 
-    public function __construct(SGlobal $sGlobal, SProduct $sProduct, SSubCategory $sSubCategory, SSatuan $sSatuan)
+    public function __construct(
+        SGlobal $sGlobal,
+        SProduct $sProduct,
+        SSubCategory $sSubCategory,
+        SSatuan $sSatuan,
+        SPriceList $sPriceList
+    )
     {
         $this->sGlobal = $sGlobal;
         $this->sProduct = $sProduct;
         $this->sSubCategory = $sSubCategory;
         $this->sSatuan = $sSatuan;
+        $this->sPriceList = $sPriceList;
     }
 
     public function index()
@@ -70,6 +79,8 @@ class ProductController extends Controller
         $hpp = $request->hpp;
         $barcode = $request->barcode;
         $satuan = $request->satuan;
+        $active_at = $request->active_at;
+        $price_list = $request->price_list;
         $created_by = $request->session()->get('id');
 
         $image_name = null;
@@ -99,6 +110,17 @@ class ProductController extends Controller
         if(!$product_satuan['status'])
         {
             return redirect()->back()->with('error', $product_satuan['message']);
+        }
+
+        foreach ($satuan as $key => $value) {
+            $input_price_list = array(
+                'product_id' => $id,
+                'satuan_id'  => $value,
+                'price'      => $price_list[$key],
+                'active_at'  => $active_at,
+                'created_by' => $created_by,
+            );
+            $created_price_list = $this->sPriceList->create($input_price_list);
         }
 
         return redirect()->route('product.index')->with('success', 'Data berhasil dibuat');
@@ -164,10 +186,9 @@ class ProductController extends Controller
         return redirect()->route('product.index')->with('success', 'Data berhasil diupdate');
     }
 
-    public function listActiveProduct(Request $request)
+    public function listActive(Request $request)
     {
-        $products = $this->sProduct->getActive($request->q);
-        return response()->json($products, 200);
+        return $this->sProduct->getActive($request->keyword);
     }
 
     public function findById($id)

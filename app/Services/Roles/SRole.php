@@ -92,9 +92,16 @@ class SRole implements IRole
         return $this->roles->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->roles->where('is_active', 1)->get();
+        $roles = $this->roles->where('is_active', 1);
+
+        if($keyword)
+        {
+            $roles = $roles->where('name', 'like', '%'.$keyword.'%');
+        }
+
+        return $roles->orderby('name', 'asc')->get();
     }
 
     public function listRole($keyword, $start, $length, $order)

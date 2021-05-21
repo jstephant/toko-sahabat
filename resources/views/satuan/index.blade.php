@@ -34,7 +34,7 @@
                                                 <th scope="col">Kode</th>
 												<th scope="col">Nama</th>
                                                 <th scope="col" width="20%">Kuantitas Std (pcs)</th>
-												<th scope="col" width="10%">Active</th>
+												<th scope="col" width="10%">Status</th>
                                                 <th scope="col" width="10%">Tgl. Update</th>
 												<th scope="col" width="5%"></th>
 											</tr>

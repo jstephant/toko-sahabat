@@ -33,9 +33,9 @@
             },
 		});
 
-        $('#browse_product').on('select2:select', function () {
-            var product_id = $('#browse_product').val();
-            var product_name = $("#browse_product option:selected" ).text();
+        $('#browse_product').on('select2:select', function (e) {
+            var data = e.params.data;
+            var product_id = data.id;
             if(product_id!='') {
                 $('#modal-new-item').modal('show');
 				$('#browse_product').val('');
@@ -92,15 +92,24 @@
         });
 
         $(document).on('click', '.edit-item', function(){
-            var edit_item = $(this).closest('.edit-item')
-            var row = $(edit_item).closest('tr');
+            var edit_item = $(this).closest('.edit-item').closest('tr');
             $(row).addClass('selected-item');
         });
 
         $(document).on('click', '.remove-item', function(){
-            var remove_item = $(this).closest('.remove-item')
-            var row = $(remove_item).closest('tr').remove();
-            hitungTotal();
+            var remove_item = $(this).closest('.remove-item').closest('tr').remove();
+
+            var elements = ['.sub_total', '.disc_rp', '.total'];
+            var hasil = hitungTotal('#detail_purchase', elements);
+
+            $('#sub_total_all').val(hasil[0]);
+            $('#sub_total_view').text(hasil[0]);
+
+            $('#discount_all').val(hasil[1]);
+            $('#discount_view').text(hasil[1]);
+
+            $('#total_all').val(hasil[2]);
+            $('#total_view').text(hasil[2]);hitungTotal();
         });
     });
 </script>

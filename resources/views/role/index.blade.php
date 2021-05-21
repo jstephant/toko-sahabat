@@ -32,7 +32,7 @@
 										<thead class="thead-light">
 											<tr>
 												<th scope="col" width="75%">Nama</th>
-												<th scope="col" width="10%">Active</th>
+												<th scope="col" width="10%">Status</th>
 												<th scope="col" width="10%">Tgl. Update</th>
 												<th scope="col" width="5%"></th>
 											</tr>
