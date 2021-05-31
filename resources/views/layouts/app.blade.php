@@ -34,6 +34,7 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.bootstrap4.min.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.7/css/responsive.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.3.2/css/fixedColumns.dataTables.min.css">
 
         {{-- flatpickr --}}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -130,7 +131,7 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{url('pembelian')}}">
+                                            <a class="nav-link" href="{{url('beli')}}">
                                                 <span class="sidenav-mini-icon"><i class="ni ni-money-coins text-default"></i></span>
                                                 <span class="sidenav-normal">Pembelian</span>
                                             </a>
@@ -152,13 +153,19 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{url('penjualan')}}">
+                                            <a class="nav-link" href="{{url('order')}}">
                                                 <span class="sidenav-mini-icon"><i class="ni ni-basket text-default"></i></span>
-                                                <span class="sidenav-normal">Penjualan</span>
+                                                <span class="sidenav-normal">Orders</span>
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
+							</li>
+                            <li class="nav-item">
+								<a class="nav-link" href="{{url('pos')}}">
+									<i class="ni ni-hat-3 text-info"></i>
+									<span class="nav-link-text">POS</span>
+								</a>
 							</li>
 						</ul>
 					</div>
@@ -190,7 +197,7 @@
                             </form>
                         @endif
                         <!-- Navbar links -->
-                        <ul class="navbar-nav align-items-center  ml-md-auto ">
+                        <ul class="navbar-nav align-items-center ml-md-auto">
                             <li class="nav-item d-xl-none">
                                 <!-- Sidenav toggler -->
                                 <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin" data-target="#sidenav-main">
@@ -201,17 +208,33 @@
                                     </div>
                                 </div>
                             </li>
+                            <li class="nav-item d-sm-none">
+                                <a class="nav-link" href="#" data-action="search-show" data-target="#navbar-search-main">
+                                  <i class="ni ni-zoom-split-in"></i>
+                                </a>
+                              </li>
                         </ul>
                     <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
+                        {{-- @if (session('role_id')!=1) --}}
+                            <li class="nav-item">
+                                @if ($show_btn_cart==1)
+                                    <a href="{{ url('pos/view-cart') }}" class="btn btn-icon bg-white {{ (session('total_item')==0) ? 'no-modal' : ''}}" id="btn_total_cart">
+                                        <span><i class="ni ni-basket"></i></span>
+                                        @if(session('total_item') && session('total_item')>0)
+                                            <span class="badge badge-md badge-circle badge-floating badge-default border-white" id="total_item_cart">{{ session('total_item') }}</span>
+                                        @endif
+                                    </a>
+                                @endif
+                            </li>
+                        {{-- @endif --}}
                         <li class="nav-item dropdown">
                             <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <div class="media align-items-center">
                                     <span class="avatar avatar-sm rounded-circle">
                                         {{ substr(strtoupper(session('user_name')), 0, 1)}}
-                                        {{-- <img alt="Image placeholder" src="../../assets/img/theme/team-4.jpg"> --}}
                                     </span>
                                     <div class="media-body  ml-2  d-none d-lg-block">
-                                        <span class="mb-0 text-sm text-dark font-weight-bold">{{ session('user_name') }}</span>
+                                        <span class="mb-0 text-sm text-white font-weight-bold">{{ session('user_name') }}</span>
                                     </div>
                                 </div>
                             </a>
@@ -219,7 +242,7 @@
                                 <div class="dropdown-header noti-title">
                                     <h6 class="text-overflow m-0">Welcome!</h6>
                                 </div>
-                                <a href="#!" class="dropdown-item">
+                                <a href="{{ url('/auth/logout') }}" class="dropdown-item">
                                     <i class="ni ni-user-run"></i>
                                     <span>Logout</span>
                                 </a>
@@ -229,6 +252,7 @@
                 </div>
             </div>
         </nav>
+        @include('alert.alert')
         @yield('content')
         <div class="container-fluid">
             <!-- Footer -->
@@ -272,6 +296,7 @@
         <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
         <script src="https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.min.js"></script>
+        <script src="https://cdn.datatables.net/fixedcolumns/3.3.2/js/dataTables.fixedColumns.min.js"></script>
 
 		<div class="backdrop d-xl-none" data-action="sidenav-unpin" data-target="undefined"></div>
 		<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"><div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div></div>

@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\user\CreateUserRequest;
+use App\Http\Requests\User\EditUserRequest;
 use App\Services\Roles\SRole;
 use App\Services\SGlobal;
 use App\Services\User\SUser;
 use Illuminate\Http\Request;
-use UxWeb\SweetAlert\SweetAlert;
+use Hash;
 
 class UserController extends Controller
 {
@@ -65,32 +66,23 @@ class UserController extends Controller
         $name = $request->name;
         $username = $request->username;
         $email = $request->email;
-        $password = bcrypt($request->password);
-        $roles = $request->role;
+        $password = $this->sGlobal->passwordEncrpt($request->password);
+        $role = $request->role;
 
         $input = array(
             'name'      => $name,
             'user_name' => $username,
             'email'     => $email,
-            'password'  => $password
+            'password'  => $password,
+            'role_id'   => $role
         );
         $created = $this->sUser->create($input);
         if(!$created['status'])
         {
-            SweetAlert::error('Error', $created['message']);
-            return redirect()->back()->withInput();
-        }
-        $user_id = $created['id'];
-
-        $user_role = $this->sUser->setUserRole($user_id, $roles);
-        if(!$user_role)
-        {
-            SweetAlert::error('Error', $user_role['message']);
-            return redirect()->back()->withInput();
+            return redirect()->back()->with('error', $created['message']);
         }
 
-        SweetAlert::success('Success', 'New user created successfully');
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->with('success', 'User berhasil dibuat');
     }
 
     public function edit($id)
@@ -109,40 +101,38 @@ class UserController extends Controller
         return $this->sGlobal->view('user.edit', $data);
     }
 
-    public function doUpdate(Request $request)
+    public function doUpdate(EditUserRequest $request)
     {
+        $validated = $request->validated();
+
         $id = $request->user_id;
         $name = $request->name;
         $email = $request->email;
-        $roles = $request->role;
+        $role = $request->role;
 
         $input = array(
             'name'       => $name,
             'email'      => $email,
+            'role_id'    => $role,
             'updated_at' => date('Y-m-d H:i:s')
         );
 
         $updated = $this->sUser->update($id, $input);
         if(!$updated['status'])
         {
-            SweetAlert::error('Error', $updated['message']);
-            return redirect()->back()->withInput();
+            return redirect()->back()->with('error', $updated['message']);
         }
 
-        $user_role = $this->sUser->setUserRole($id, $roles);
-        if(!$user_role)
-        {
-            alert()->error('Error', $user_role['message']);
-            return redirect()->back()->withInput();
-        }
-
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->with('success', 'Data berhasil diupdate');
     }
 
-    public function checkData($field, $keyword)
+    public function doDelete($id)
     {
-        $user = $this->sUser->findData($field, $keyword);
-        return ($user) ? 0 : 1;
+        $deleted = $this->sUser->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('user.index')->with('success', 'Data berhasil dihapus');
     }
 }

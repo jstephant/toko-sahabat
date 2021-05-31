@@ -23,7 +23,24 @@ class SUser implements IUser
 
     public function login($username, $password)
     {
-        return $this->users->where('user_name', $username)->where('password', $password)->first();
+        $data = array(
+            'status'  => false,
+            'message' => '',
+            'data'    => null
+        );
+
+        $user = $this->users->where('user_name', $username)->where('password', $password)->first();
+        if($user)
+        {
+            $data['status'] = true;
+            $data['message'] = 'OK';
+            $data['data'] = array(
+                'id'      => $user->id,
+                'name'    => $user->name,
+                'role_id' => $user->role_id
+            );
+        }
+        return $data;
     }
 
     public function create($input)
@@ -122,7 +139,7 @@ class SUser implements IUser
 
     public function findById($id)
     {
-        return $this->users->with('user_role')->where('id', $id)->first();
+        return $this->users->with('role')->where('id', $id)->first();
     }
 
     public function findByUsername($username)
@@ -135,23 +152,30 @@ class SUser implements IUser
         return $this->users->where('email', $email)->first();
     }
 
-    public function findData($field, $keyword)
+    public function getActive($keyword=null)
     {
-        return $this->users->where($field, $keyword)->first();
-    }
-
-    public function getActive()
-    {
-        return $this->users->where('is_active', 1)->where('restricted', 0)->select('id', 'name', 'user_name', 'email')->get();
-    }
-
-    public function list($keyword, $start, $length, $order)
-    {
-        $users = $this->users->with('user_role', 'user_role.role')->where('restricted', 0);
+        $users = $this->users
+                      ->where('is_active', 1)
+                      ->where('restricted', 0)
+                      ->select('id', 'name', 'user_name', 'email');
 
         if($keyword)
         {
             $users = $users->where('name', 'like', '%'.$keyword.'%');
+        }
+
+        return $users->orderby('name', 'asc')->get();
+    }
+
+    public function list($keyword, $start, $length, $order)
+    {
+        $users = $this->users->with('role')->where('restricted', 0);
+
+        if($keyword)
+        {
+            $users = $users->where('name', 'like', '%'.$keyword.'%')
+                           ->orwhere('email', 'like', '%'.$keyword.'%')
+                           ->orwhere('user_name', 'like', '%'.$keyword.'%');
         }
 
         $count = $users->count();
@@ -160,15 +184,28 @@ class SUser implements IUser
             $users = $users->offset($start)->limit($length);
         }
 
-        $users = $users->get();
-        foreach ($users as $value) {
-            $role_name = array();
-            foreach ($value->user_role as $value2) {
-                array_push($role_name, $value2->role->name);
+        if(count($order)>0)
+        {
+            switch ($order[0]['column']) {
+                case 0:
+                    $users = $users->orderby('name', $order[0]['dir']);
+                    break;
+                case 1:
+                    $users = $users->orderby('user_name', $order[0]['dir']);
+                    break;
+                case 2:
+                    $users = $users->orderby('email', $order[0]['dir']);
+                    break;
+                case 5:
+                    $users = $users->orderby('created_at', $order[0]['dir']);
+                    break;
+                default:
+                    $users = $users->orderby('created_at', $order[0]['dir']);
+                    break;
             }
-
-            $value->role_name = implode(', ', $role_name);
         }
+
+        $users = $users->get();
 
         $data = [
             'recordsTotal'    => $count,

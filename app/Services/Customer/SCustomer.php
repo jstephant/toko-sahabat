@@ -92,9 +92,14 @@ class SCustomer implements ICustomer
         return $this->customer->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->customer->where('is_active', 1)->get();
+        $customer = $this->customer->where('is_active', 1);
+        if($keyword)
+        {
+            $customer = $customer->where('name', 'like', '%'.$keyword.'%');
+        }
+        return $customer->get();
     }
 
     public function getActiveByName($name)
@@ -104,7 +109,7 @@ class SCustomer implements ICustomer
 
     public function listCustomer($keyword, $start, $length, $order)
     {
-        $customer = $this->customer;
+        $customer = $this->customer->with(['created_user', 'updated_user']);
 
         if($keyword)
         {
@@ -126,5 +131,10 @@ class SCustomer implements ICustomer
         ];
 
         return $data;
+    }
+
+    public function findByPhone($phone)
+    {
+        return $this->customer->where('mobile_phone', $phone)->first();
     }
 }

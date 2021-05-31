@@ -62,6 +62,7 @@
 		</div>
 	</div>
     @include('sub-category.script.index')
-    @include('sub-category.modal.create-edit')
-    @include('sub-category.script.create-edit')
+    @include('sub-category.modal.sub-create-edit')
+    @include('sub-category.script.sub-create-edit')
+    @include('confirmation.delete')
 @endsection

@@ -25,18 +25,24 @@ class CreateUserRequest extends FormRequest
     {
         return [
             'name'     => 'required',
-            'username' => 'required',
+            'email'    => 'email|nullable|unique:users,email',
+            'username' => 'required|unique:users,user_name',
             'password' => 'required|min:5',
+            'role'     => 'required'
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required'     => 'Nama wajib diisi.',
-            'username.required' => 'Username wajib diisi.',
-            'password.required' => 'Password wajib diisi.',
-            'password.min'      => 'Password minimal diisi dengan 5 karakter.',
+            'name.required'     => 'Nama harus diisi',
+            'email.email'       => 'Email tidak valid',
+            'email.unique'      => 'Email sudah terpakai',
+            'username.required' => 'Username harus diisi',
+            'username.unique'   => 'Username sudah terpakai',
+            'password.required' => 'Password harus diisi',
+            'password.min'      => 'Password minimal diisi dengan 5 karakter',
+            'role.required'     => 'Role harus diisi'
         ];
     }
 }

@@ -8,10 +8,27 @@ class Orders extends Model
 {
     protected $table = 'orders';
     protected $primaryKey = 'id';
+    protected $fillable = ['order_code', 'order_date', 'cart_id', 'customer_id', 'sub_total', 'disc_price', 'total',
+                        'delivery_address', 'notes', 'payment_status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'];
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class, 'cart_id');
+    }
 
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function payment_status()
+    {
+        return $this->belongsTo(PaymentStatus::class, 'payment_status_id');
+    }
+
+    public function transaction_status()
+    {
+        return $this->belongsTo(TransactionStatus::class, 'status_id');
     }
 
     public function order_product()

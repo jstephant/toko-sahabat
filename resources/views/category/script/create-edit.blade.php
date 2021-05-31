@@ -1,6 +1,7 @@
 <script>
     $(document).ready(function () {
         $('#data-loader').hide();
+        $('.alert_error').hide();
 		$('#modal-create-edit').on('show.bs.modal', function(e) {
             $('#status').select2({
                 dropdownParent: $('#modal-create-edit'),
@@ -33,31 +34,43 @@
                 $("#status").prop('required', true);
 			}
 		});
+    });
 
-        $('#name').on('input', function(){
-            if($('#name').val()==""){
-                $('#check-name').hide();
-            } else {
-                $.ajax({
-                    type: "GET",
-                    url: APP_URL + '/kategori/check-name/' + $('#name').val(),
-                    success: function (response) {
-                        console.log();
-                        $('#check-name').removeClass('text-success text-danger');
-                        if(response==1) {
-                            $('#check-name').text('tersedia');
-                            $('#check-name').addClass('text-success');
-                        } else {
-                            $('#check-name').text('tidak tersedia');
-                            $('#check-name').addClass('text-danger');
-                        }
-                    },
-                    complete: function()
-                    {
-                        $('#check-name').show();
-                    }
-                });
+    function storeData() {
+        $('#nameError').addClass('d-none');
+        $('#statusError').addClass('d-none');
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('category.save.post') }}",
+            data: {
+                _token: CRSF_TOKEN,
+                category_id: $('#category_id').val(),
+                name: $('#name').val(),
+                status: $('#status').val(),
+                mode: $('#mode').val()
+            },
+            success: function (response) {
+                if (response.status==false) {
+                    $('.error-msg').text(response.message);
+                    $('.alert_error').show();
+                    window.setTimeout(function() {
+                        $('.alert_error').hide();
+                    }, 3000);
+                } else
+                    location.reload();
+            },
+            error: function (response) {
+                var errors = response.responseJSON;
+                if($.isEmptyObject(errors) == false)
+                {
+                    $.each(errors.errors, function (key, value) {
+                         var errorID = '#' + key + 'Error';
+                         $(errorID).removeClass('d-none');
+                         $(errorID).text(value);
+                    });
+                }
             }
         });
-    });
+    }
 </script>

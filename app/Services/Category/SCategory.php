@@ -101,9 +101,14 @@ class SCategory implements ICategory
         return $this->category->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->category->where('is_active', 1)->get();
+        $category = $this->category->where('is_active', 1);
+        if($keyword)
+        {
+            $category = $category->where('name', 'like', '%'.$keyword.'%');
+        }
+        return $category->get();
     }
 
     public function listCategory($keyword, $start, $length, $order)
@@ -119,6 +124,18 @@ class SCategory implements ICategory
 
         if($length!=-1) {
             $category = $category->offset($start)->limit($length);
+        }
+
+        if(count($order)>0)
+        {
+            switch ($order[0]['column']) {
+                case 0:
+                    $category = $category->orderby('name', $order[0]['dir']);
+                    break;
+                default:
+                    $category = $category->orderby('name', $order[0]['dir']);
+                    break;
+            }
         }
 
         $category = $category->get();
@@ -141,7 +158,7 @@ class SCategory implements ICategory
 
         try {
             DB::beginTransaction();
-            $sub_category = SubCategory::where('category_id', $category_id)->update(['is_active', 0]);
+            $sub_category = SubCategory::where('category_id', $category_id)->update(['is_active' => 0]);
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -152,10 +169,5 @@ class SCategory implements ICategory
         }
 
         return $data;
-    }
-
-    public function checkData($field, $keyword)
-    {
-        return $this->category->where($field, $keyword)->first();
     }
 }

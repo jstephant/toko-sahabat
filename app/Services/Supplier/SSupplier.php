@@ -92,9 +92,16 @@ class SSupplier implements ISupplier
         return $this->supplier->where('id', $id)->first();
     }
 
-    public function getActive()
+    public function getActive($keyword=null)
     {
-        return $this->supplier->where('is_active', 1)->get();
+        $supplier = $this->supplier->where('is_active', 1);
+
+        if($keyword)
+        {
+            $supplier = $supplier->where('name', 'like', '%'. $keyword .'%');
+        }
+
+        return $supplier->orderby('name', 'asc')->get();
     }
 
     public function getActiveByName($name)
@@ -108,13 +115,40 @@ class SSupplier implements ISupplier
 
         if($keyword)
         {
-            $suppliers = $suppliers->where('name', 'like', '%'.$keyword.'%');
+            $suppliers = $suppliers->where('name', 'like', '%'.$keyword.'%')
+                                   ->orwhere('mobile_phone', 'like', '%'.$keyword.'%')
+                                   ->orwhere('email', 'like', '%'.$keyword.'%')
+                                   ->orwhere('address', 'like', '%'.$keyword.'%');
         }
 
         $count = $suppliers->count();
 
         if($length!=-1) {
             $suppliers = $suppliers->offset($start)->limit($length);
+        }
+
+        if(count($order)>0)
+        {
+            switch ($order[0]['column']) {
+                case 0:
+                    $suppliers = $suppliers->orderby('name', $order[0]['dir']);
+                    break;
+                case 1:
+                    $suppliers = $suppliers->orderby('mobile_phone', $order[0]['dir']);
+                    break;
+                case 2:
+                    $suppliers = $suppliers->orderby('email', $order[0]['dir']);
+                    break;
+                case 3:
+                    $suppliers = $suppliers->orderby('address', $order[0]['dir']);
+                    break;
+                case 5:
+                    $suppliers = $suppliers->orderby('created_at', $order[0]['dir']);
+                    break;
+                default:
+                    $suppliers = $suppliers->orderby('created_at', $order[0]['dir']);
+                    break;
+            }
         }
 
         $suppliers = $suppliers->get();

@@ -29,11 +29,6 @@
 			pagingType: "simple_numbers",
 			columns : [
                 {
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
 					orderable: true,
 					render: function(data, type, row, meta) {
                         return row.name;
@@ -52,28 +47,24 @@
 					}
 				},
 				{
-					orderable: true,
+					orderable: false,
 					render: function(data, type, row, meta) {
-                        return row.role_name;
+                        return row.role.name;
 					}
 				},
                 {
-					orderable: true,
+					orderable: false,
 					render: function(data, type, row, meta) {
-                        var is_active = "";
-                        if(row.is_active==1) is_active = "checked";
-                        var content = `
-                            <label class="custom-toggle custom-toggle-success">
-                                <input type="checkbox" disabled ` + is_active + `>
-                                <span class="custom-toggle-slider rounded-circle"></span>
-                            </label>`;
+                        if(row.is_active==1)
+                            var content = `<small class="badge badge-success badge-md">Aktif</small>`;
+                        else var content = `<small class="badge badge-danger badge-md">Tidak Aktif</small>`;
 						return content;
 					}
 				},
                 {
 					orderable: true,
 					render: function(data, type, row, meta) {
-                        return row.created_at
+                        return (row.updated_at) ? row.updated_at : row.created_at;
 					}
 				},
                 {
@@ -84,10 +75,18 @@
                         if(row.restricted==0)
                         {
                             link_edit = `href="{{url('/user/edit/` + row.id + `')}}"`;
-                            link_inactive = `href="{{url('/user/delete/` + row.id + `')}}"`;
                         } else {
                             link_edit = `href="#"`;
-                            link_inactive = `href="#"`;
+                        }
+                        var delete_link = "";
+                        if(row.is_active==1)
+                        {
+                            delete_link = `<a class="dropdown-item text-danger" href="#"
+                                                data-toggle="modal"
+                                                data-target="#modal-confirm-delete"
+                                                data-id="` + row.id + `"
+                                                data-link="/user/delete">Delete
+                                            </a>`;
                         }
 						var content = `
 							<ul class="navbar-nav ml-lg-auto">
@@ -95,7 +94,7 @@
 									<a class="text-gray" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
 									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-primary_dropdown_1">
                                         <a class="dropdown-item" ` + link_edit + `>Edit</a>
-                                        <a class="dropdown-item" ` + link_inactive + `>Delete</a>
+                                        ` + delete_link+ `
 									</div>
 								</li>
 							</ul>

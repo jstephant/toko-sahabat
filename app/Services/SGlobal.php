@@ -2,12 +2,34 @@
 
 namespace App\Services;
 
+use App\Models\Cart;
+use App\Models\Orders;
+use App\Models\Product;
+use App\Models\Purchase;
+use App\Models\TransactionStatus;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Hash;
+use Image;
 
 class SGlobal implements IGlobal
 {
+    private $product;
+    private $purchase;
+    private $orders;
+    private $transactionStatus;
+    private $cart;
+
+    public function __construct(Product $product, Purchase $purchase, Orders $orders,
+        TransactionStatus $transactionStatus, Cart $cart)
+    {
+        $this->product = $product;
+        $this->purchase = $purchase;
+        $this->orders = $orders;
+        $this->transactionStatus = $transactionStatus;
+        $this->cart = $cart;
+    }
+
     public function curlAPI($type, $url, $request = null, $content_type = '', $headers = array())
     {
         $data = array(
@@ -72,5 +94,49 @@ class SGlobal implements IGlobal
     public function passwordEncrpt($password)
     {
         return Hash::make($password);
+    }
+
+    public function uploadImage($file, $destFolder)
+    {
+        $new_name = time() . '.' . $file->extension();
+        $destinationPath = public_path('images/'.$destFolder.'/thumbnail');
+        $img = Image::make($file->path());
+        $img->resize(100, 100, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath.'/'.$new_name);
+
+        $destinationPath = public_path('images/'.$destFolder);
+        $img->resize(1024, 760, function($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath.'/'.$new_name);
+
+        return $new_name;
+    }
+
+    public function generateCode($type, $table = null, $column = null, $length = 4)
+    {
+        $characters = '1234567890';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+
+        if($type!='pin')
+        {
+            $check = $this->$table->where($column, $randomString)->first();
+
+            if((isset($check->id) && $check->id != null) || strlen(intval($randomString))<$length){
+                $randomString = $this->generateCode($type, $table, $column, $length);
+            }
+        }
+
+        return $randomString;
+    }
+
+    public function getTransactionStatus($transaction_type)
+    {
+        return $this->transactionStatus->where($transaction_type, 1)->orderby('id', 'asc')->get();
     }
 }

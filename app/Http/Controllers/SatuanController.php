@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Satuan\SatuanRequest;
+use App\Models\Satuan;
 use App\Services\Satuan\SSatuan;
 use App\Services\SGlobal;
 use Illuminate\Http\Request;
@@ -36,52 +38,72 @@ class SatuanController extends Controller
         return $satuan;
     }
 
-    public function doSave(Request $request)
+    public function listActive(Request $request)
     {
+        return $this->sSatuan->getActive($request->q);
+    }
+
+    public function doSave(SatuanRequest $request)
+    {
+        $validated = $request->validated();
+
+        $data = array(
+            'status'  => true,
+            'message' => ''
+        );
+
         $mode = $request->mode;
         $satuan_id = $request->satuan_id;
         $code = $request->code;
         $name = $request->name;
         $status = $request->status;
+        $qty = $request->qty;
 
         if($mode=='create')
         {
             $input = array(
                 'code' => $code,
-                'name' => $name
+                'name' => $name,
+                'qty'  => $qty,
             );
 
             $created = $this->sSatuan->create($input);
             if(!$created['status'])
             {
-                alert()->error('Error', $created['message']);
-                return redirect()->back()->withInput();
+                $data['status'] = $created['status'];
+                $data['message'] = $created['message'];
+                return response()->json($data, 200);
             }
         } elseif($mode=='edit')
         {
             $input = array(
                 'code'       => $code,
                 'name'       => $name,
+                'qty'        => $qty,
                 'is_active'  => $status,
+                'updated_at' => date('Y-m-d H:i:s')
             );
 
             $updated = $this->sSatuan->update($satuan_id, $input);
             if(!$updated['status'])
             {
-                alert()->error('Error', $updated['message']);
-                return redirect()->back()->withInput();
+                $data['status'] = $updated['status'];
+                $data['message'] = $updated['message'];
+                return response()->json($data, 200);
             }
         }
 
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('satuan.index');
+        $request->session()->flash('success', 'Data berhasil diupdate');
+        return response()->json($data, 200);
     }
 
-    public function checkData($field, $keyword)
+    public function doDelete($id)
     {
-        $satuan = $this->sSatuan->findData($field, $keyword);
-        return ($satuan) ? 0 : 1;
+        $deleted = $this->sSatuan->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('satuan.index')->with('success', 'Data berhasil dihapus');
     }
-
-
 }

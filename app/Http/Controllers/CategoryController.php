@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Category\CategoryRequest;
 use App\Services\Category\SCategory;
 use App\Services\SGlobal;
 use Illuminate\Http\Request;
@@ -41,8 +42,15 @@ class CategoryController extends Controller
         return ($category) ? 0 : 1;
     }
 
-    public function doSave(Request $request)
+    public function doSave(CategoryRequest $request)
     {
+        $validated = $request->validated();
+
+        $data = array(
+            'status'  => true,
+            'message' => '',
+        );
+
         $mode = $request->mode;
         $category_id = $request->category_id;
         $name = $request->name;
@@ -57,8 +65,9 @@ class CategoryController extends Controller
             $created = $this->sCategory->create($input);
             if(!$created['status'])
             {
-                alert()->error('Error', $created['message']);
-                return redirect()->back()->withInput();
+                $data['status'] = $created['status'];
+                $data['message'] = $created['message'];
+                return response()->json($data, 200);
             }
         } elseif($mode=='edit')
         {
@@ -70,17 +79,27 @@ class CategoryController extends Controller
             $updated = $this->sCategory->update($category_id, $input);
             if(!$updated['status'])
             {
-                alert()->error('Error', $updated['message']);
-                return redirect()->back()->withInput();
+                $data['status'] = $updated['status'];
+                $data['message'] = $updated['message'];
+                return response()->json($data, 200);
             }
         }
-
-        alert()->success('Success', 'Data updated successfully');
-        return redirect()->route('category.index');
+        $request->session()->put('success', 'Data berhasil diupdate');
+        return response()->json($data, 200);
     }
 
-    public function getActive()
+    public function listActive(Request $request)
     {
-        return $this->sCategory->getActive();
+        return $this->sCategory->getActive($request->keyword);
+    }
+
+    public function doDelete($id)
+    {
+        $deleted = $this->sCategory->delete($id);
+        if(!$deleted['status'])
+        {
+            return redirect()->back()->with('error', $deleted['message']);
+        }
+        return redirect()->route('category.index')->with('success', 'Data berhasil dihapus');
     }
 }

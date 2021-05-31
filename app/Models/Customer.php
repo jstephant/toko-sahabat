@@ -24,4 +24,9 @@ class Customer extends Model
     {
         return date('j F Y H:i', strtotime($date));
     }
+
+    public function getUpdatedAtAttribute($date)
+    {
+        return ($date) ? date('j F Y H:i', strtotime($date)) : null;
+    }
 }
