@@ -122,6 +122,76 @@
                                             </div>
                                         </div>
 
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form-label-sm text-uppercase display-4">Daftar Harga Jual</label>
+                                                    <div class="card shadow">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label for="active_at" class="col-form-label-sm text-uppercase display-4">Tgl. Berlaku *</label>
+                                                                        <input type="text" class="form-control flatpickr flatpickr-input @error('active_at') 'is-invalid' @enderror" id="active_at" name="active_at" value="{{ $price_list['active_at'] }}" required>
+                                                                        @error('active_at')
+                                                                            <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-bordered align-items-center" id="detail_price_list" width="100%">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th scope="col">Satuan</th>
+                                                                                    <th scope="col">Harga</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @if($price_list['price_list'])
+                                                                                    @foreach ($price_list['price_list'] as $i => $item)
+                                                                                        <tr>
+                                                                                            <td><span class="x1">{{ $item->satuan->name }}</span></td>
+                                                                                            <td>
+                                                                                                <div class="form-group">
+                                                                                                    <input type="number" name="price_list[]" class="form-control price_list @error('price_list.'.$i) 'is-invalid' @enderror" autocomplete="off" value="{{ $item->price }}" required>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <input type="hidden" name="satuan_id[]" class="satuan" value="{{ $item->satuan_id }}">
+                                                                                            <input type="hidden" name="satuan_name[]" class="satuan" value="{{ $item->satuan->name }}">
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                    <input type="hidden" id="idx_price_list" value="{{ $i+1 }}">
+                                                                                @else
+                                                                                    @foreach ($product->product_satuan as $i => $item)
+                                                                                        <tr>
+                                                                                            <td><span class="x1">{{ $item->satuan->name }}</span></td>
+                                                                                            <td>
+                                                                                                <div class="form-group">
+                                                                                                    <input type="number" name="price_list[]" class="form-control price_list @error('price_list.'.$i) 'is-invalid' @enderror" autocomplete="off" value="" required>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <input type="hidden" name="satuan_id[]" class="satuan" value="{{ $item->satuan_id }}">
+                                                                                            <input type="hidden" name="satuan_name[]" class="satuan" value="{{ $item->satuan->name }}">
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                    <input type="hidden" id="idx_price_list" value="{{ $i+1 }}">
+                                                                                    {{-- <input type="hidden" id="idx_price_list" value="0"> --}}
+                                                                                @endif
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>

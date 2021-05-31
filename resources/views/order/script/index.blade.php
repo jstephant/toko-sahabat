@@ -14,19 +14,23 @@
 			maxDate: new Date(),
         });
 
-        $('#supplier').select2();
+        $('#customer').select2();
+        $('#payment_status').select2({
+			minimumResultsForSearch: -1,
+		});
 
-        var purchase_table = $('#purchase_table').DataTable( {
+        var purchase_table = $('#order_table').DataTable( {
 			processing: true,
             serverSide: true,
             responsive: false,
             pageLength: 10,
             ajax: {
                 type: "GET",
-				url: APP_URL + '/beli/list',
+				url: APP_URL + '/order/list',
 				data: function(d) {
                     d.start_date = $('#start_date').val();
                     d.end_date = $('#end_date').val();
+                    d.status = $('#status').val();
 					d.keyword = $('#searchactive').val();
 				}
 			},
@@ -49,19 +53,25 @@
                 {
 					orderable: true,
 					render: function(data, type, row, meta) {
-                        return row.purchase_number;
+                        return row.order_code;
 					}
 				},
 				{
 					orderable: true,
 					render: function(data, type, row, meta) {
-						return row.purchase_date;
+						return row.order_date;
 					}
 				},
 				{
 					orderable: true,
 					render: function(data, type, row, meta) {
-                        return row.supplier.name;
+                        return row.customer.name;
+					}
+				},
+                {
+					orderable: true,
+					render: function(data, type, row, meta) {
+                        return row.customer.mobile_phone;
 					}
 				},
                 {
@@ -99,25 +109,27 @@
 					}
 				},
                 {
-					orderable: false,
+					orderable: true,
 					render: function(data, type, row, meta) {
-						var content = `
-							<ul class="navbar-nav ml-lg-auto">
-								<li class="nav-item dropdown">
-									<a class="text-gray" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-primary_dropdown_1">
-                                        <a class="dropdown-item" href="{{url('/beli/edit/` + row.id + `')}}">Edit</a>
-                                        <a class="dropdown-item text-danger" href="#"
+                        var content = `<a class="dropdown-item text-success" href="#"
                                             data-toggle="modal"
-                                            data-target="#modal-confirm-delete"
+                                            data-target="#modal-payment"
                                             data-id="` + row.id + `"
-                                            data-link="/beli/delete">Delete
-                                        </a>
-									</div>
-								</li>
-							</ul>
-						`;
-						return content;
+                                            data-link="/order/pay">Bayar
+                                        </a>`
+                        return content
+					}
+				},
+                {
+					orderable: true,
+					render: function(data, type, row, meta) {
+                        var content = `<a class="dropdown-item text-danger" href="#"
+                                            data-toggle="modal"
+                                            data-target="#modal-confirm-cancel"
+                                            data-id="` + row.id + `"
+                                            data-link="/order/cancel">Batal
+                                        </a>`
+                        return content
 					}
 				},
             ],
@@ -126,11 +138,11 @@
 		});
 
         $('#searchactive').on('input', function(){
-            purchase_table.ajax.reload()
+            order_table.ajax.reload()
         });
 
-        $('#start_date, #end_date, #supplier').on('change', function(){
-            purchase_table.ajax.reload();
+        $('#start_date, #end_date, #customer').on('change', function(){
+            order_table.ajax.reload();
         });
     });
 </script>

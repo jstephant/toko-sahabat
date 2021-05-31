@@ -166,25 +166,6 @@ class SProduct implements IProduct
         return $data;
     }
 
-    public function generateCode($type, $length = 4)
-    {
-        $characters = '1234567890';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-
-        $check = $this->product->where($type, $randomString)->first();
-
-        if((isset($check->id) && $check->id != null) || strlen(intval($randomString))<$length){
-            $randomString = $this->generateCode($type, $length);
-        }
-
-        return $randomString;
-    }
-
     public function createSubCategory($input)
     {
         $data = array(
@@ -345,5 +326,23 @@ class SProduct implements IProduct
         }
 
         return $data;
+    }
+
+    public function getProductSatuanById($product_id)
+    {
+        return DB::table('product_satuan')
+                 ->leftjoin('satuan', 'product_satuan.satuan_id', 'satuan.id')
+                 ->where('product_id', $product_id)
+                 ->orderby('satuan.qty', 'asc')
+                 ->get();
+    }
+
+    public function getDetailProductSatuan($product_id, $satuan_id)
+    {
+        return DB::table('product_satuan')
+                 ->leftjoin('satuan', 'product_satuan.satuan_id', 'satuan.id')
+                 ->where('product_id', $product_id)
+                 ->where('satuan_id', $satuan_id)
+                 ->first();
     }
 }

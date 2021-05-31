@@ -8,7 +8,7 @@ class Purchase extends Model
 {
     protected $table = 'purchase';
     protected $primaryKey = 'id';
-    protected $fillable = ['purchase_number', 'purchase_date', 'supplier_id', 'sub_total', 'disc_pctg', 'disc_price', 'total', 'notes', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'];
+    protected $fillable = ['purchase_number', 'purchase_date', 'supplier_id', 'sub_total', 'disc_price', 'total', 'notes', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'];
 
     public function supplier()
     {
@@ -30,9 +30,9 @@ class Purchase extends Model
         return $this->hasMany(PurchaseProduct::class, 'purchase_id', 'id');
     }
 
-    public function purchase_status()
+    public function transaction_status()
     {
-        return $this->belongsTo(PurchaseStatus::class, 'status_id', 'id');
+        return $this->belongsTo(TransactionStatus::class, 'status_id');
     }
 
     public function getCreatedAtAttribute($date)

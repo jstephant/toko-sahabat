@@ -133,6 +133,6 @@
         </div>
     </div>
     @include('purchase.script.edit')
-    @include('purchase.modal.new-item')
-    @include('purchase.script.new-item')
+    @include('product.modal.item-transaction')
+    @include('product.script.item-transaction')
 @endsection

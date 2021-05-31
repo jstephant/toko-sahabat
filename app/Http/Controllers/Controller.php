@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Illuminate\Support\Facades\Session;
 
 class Controller extends BaseController
 {
@@ -17,6 +17,13 @@ class Controller extends BaseController
         if (Session::has($key))
         {
             Session::forget($key);
+        }
+    }
+
+    public function checkSession()
+    {
+        if(!Session::has('id')) {
+            return redirect()->route('login');
         }
     }
 }

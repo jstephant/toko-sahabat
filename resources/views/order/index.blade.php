@@ -9,12 +9,9 @@
 						<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 							<ol class="breadcrumb breadcrumb-links breadcrumb-dark">
 								<li class="breadcrumb-item"><a href="{{url('home')}}"><i class="fas fa-home text-white"></i></a></li>
-								<li class="breadcrumb-item active"><a href="#" class="text-white">Daftar Pembelian</a></li>
+								<li class="breadcrumb-item active"><a href="#" class="text-white">Daftar Order</a></li>
 							</ol>
 						</nav>
-					</div>
-					<div class="col-lg-6 col-5 text-right">
-						<a href="{{url('beli/create')}}" class="btn btn-sm btn-neutral">Create</a>
 					</div>
 				</div>
 			</div>
@@ -36,10 +33,20 @@
                             </div>
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <label for="supplier" class="col-form-label-sm text-uppercase display-4">Supplier</label>
-                                    <select id="supplier" name="supplier" class="form-control">
+                                    <label for="payment_status" class="col-form-label-sm text-uppercase display-4">Status Bayar</label>
+                                    <select id="payment_status" name="payment_status" class="form-control">
+                                        @foreach ($payment_status as $item)
+											<option value="{{ $item->id }}">{{$item->name}}
+										@endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <label for="customer" class="col-form-label-sm text-uppercase display-4">Customer</label>
+                                    <select id="customer" name="customer" class="form-control">
                                         <option value=""></option>
-                                        @foreach ($supplier as $item)
+                                        @foreach ($customer as $item)
 											<option value="{{ $item->id }}">{{$item->name}}
 										@endforeach
                                     </select>
@@ -49,15 +56,17 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="table-responsive">
-									<table class="table table-striped align-items-center" id="purchase_table" width="100%">
+									<table class="table table-striped align-items-center" id="order_table" width="100%">
 										<thead class="thead-light">
 											<tr>
-												<th scope="col">No. Pembelian</th>
-												<th scope="col">Tgl. Pembelian</th>
-                                                <th scope="col">Supplier</th>
+												<th scope="col">No. Order</th>
+												<th scope="col">Tgl. Order</th>
+                                                <th scope="col">Customer</th>
+                                                <th scope="col">No. Telp</th>
 												<th scope="col">Sub Total</th>
-												<th scope="col">Disc</th>
+												<th scope="col">Discount</th>
                                                 <th scope="col">Total</th>
+                                                <th scope="col">Status Bayar</th>
 												<th scope="col">Tgl. Update</th>
 												<th scope="col"></th>
 											</tr>
@@ -71,6 +80,6 @@
 			</div>
 		</div>
 	</div>
-    @include('purchase.script.index')
-    @include('confirmation.delete')
+    @include('order.script.index')
+    @include('confirmation.cancel')
 @endsection

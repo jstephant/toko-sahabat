@@ -1,26 +1,30 @@
 <script>
     $(document).ready(function () {
-        $('#satuan').select2({
-            dropdownParent: $('#modal-new-item'),
-            minimumResultsForSearch: -1,
-            ajax: {
-                url: APP_URL + '/satuan/list-active',
-                type: "GET",
-                dataType: 'json',
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item){
-							return {
-								text: item.name,
-								id: item.id
-							}
-                        })
-                    };
-                },
-            }
-        });
-
         $('#modal-new-item').on('show.bs.modal', function(e){
+            var data_source = $(e.relatedTarget).data('source-satuan');
+            if(data_source=='satuan')
+            {
+                $('#satuan').select2({
+                    dropdownParent: $('#modal-new-item'),
+                    minimumResultsForSearch: -1,
+                    ajax: {
+                        url: APP_URL + '/satuan/list-active',
+                        type: "GET",
+                        dataType: 'json',
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item){
+                                    return {
+                                        text: item.name,
+                                        id: item.id
+                                    }
+                                })
+                            };
+                        },
+                    }
+                });
+            }
+
             var mode = $(e.relatedTarget).data('mode');
             if(mode!='edit')
             {
@@ -31,11 +35,36 @@
                 $('#nama_barang').text(product_name);
                 $('#btn_add_item').text('Tambah');
             } else {
+                var product_id = $(e.relatedTarget).data('product_id');
+                var satuan_id = $(e.relatedTarget).data('satuan_id');
+                var satuan_name = $(e.relatedTarget).data('satuan_name');
+                if(data_source=='product_satuan')
+                {
+                    $('#satuan').select2({
+                        dropdownParent: $('#modal-new-item'),
+                        minimumResultsForSearch: -1,
+                        ajax: {
+                            url: APP_URL + '/barang/product-satuan/' + product_id,
+                            type: "GET",
+                            dataType: 'json',
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item){
+                                        return {
+                                            text: item.name,
+                                            id: item.satuan_id
+                                        }
+                                    })
+                                };
+                            },
+                        }
+                    });
+                }
                 $('#mode').val(mode);
-                $('#product_id').val($(e.relatedTarget).data('product_id'));
+                $('#product_id').val(product_id);
                 $('#nama_barang').text($(e.relatedTarget).data('product_name'));
-                $('#satuan').val($(e.relatedTarget).data('satuan_id'));
-                $('#satuan').trigger('change');
+                $('#satuan').select2('data', {id:satuan_id, label:satuan_name});
+                // $('#satuan').val(satuan_id).trigger('change');
                 $('#qty_item').val($(e.relatedTarget).data('qty_item'));
                 $('#price_item').val($(e.relatedTarget).data('price_item'));
                 $('#sub_total_item').val($(e.relatedTarget).data('sub_total_item'));
@@ -65,20 +94,22 @@
                 data-product_id="` + product_id + `"
                 data-product_name="` + product_name + `"
                 data-satuan_id="` + satuan_id + `"
+                data-satuan_name="` + satuan_name + `"
                 data-qty_item="` + qty + `"
                 data-price_item="` + price +`"
                 data-sub_total_item="` + sub_total + `"
                 data-disc_pctg_item="` + disc_pctg + `"
                 data-disc_rp_item="` + disc_rp + `"
                 data-total_item="` + total +`"
+                data-source-satuan="satuan"
             ><span class="btn-inner--icon"><i class="far fa-edit"></i></span></button>`;
         var content = "";
         content += `<tr>`;
-        content += `<td><span class="x1">` + product_name + `<br>Satuan: ` + satuan_name + `</span></td>`;
+        content += `<td><span class="x1">` + product_name + `<br><span class="badge badge-default">`+ satuan_name +`</span></span></td>`;
         content += `<td><span class="x2">` + qty + `</span></td>`;
         content += `<td><span class="x3">` + price + `</span></td>`;
         content += `<td><span class="x4">` + sub_total + `</span></td>`;
-        content += `<td><span class="x5">(%): ` + disc_pctg + `<br>Rp: ` + disc_rp +`</span></td>`;
+        content += `<td><span class="x5">` + disc_rp +`</span></td>`;
         content += `<td><span class="x6">` + total + `</span></td>`;
         content += `<td>`;
 	    content += link_edit;
@@ -100,11 +131,11 @@
             $('#detail_purchase > tbody:last-child').append(content);
         else {
             var selected_item = $('table#detail_purchase > tbody > tr.selected-item');
-            $(selected_item).find('.x1').html(product_name + `<br>Satuan: ` + satuan_name);
+            $(selected_item).find('.x1').html(product_name + `<br><span class="badge badge-default">` + satuan_name + `</span>`);
             $(selected_item).find('.x2').html(qty);
             $(selected_item).find('.x3').html(price);
             $(selected_item).find('.x4').html(sub_total);
-            $(selected_item).find('.x5').html(`(%): ` + disc_pctg + `<br>Rp: ` + disc_rp);
+            $(selected_item).find('.x5').html(disc_rp);
             $(selected_item).find('.x6').html(total);
 
             $(selected_item).find('.qty').val(qty);

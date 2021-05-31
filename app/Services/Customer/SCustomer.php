@@ -132,4 +132,9 @@ class SCustomer implements ICustomer
 
         return $data;
     }
+
+    public function findByPhone($phone)
+    {
+        return $this->customer->where('mobile_phone', $phone)->first();
+    }
 }

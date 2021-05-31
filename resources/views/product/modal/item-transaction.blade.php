@@ -25,11 +25,11 @@
                                 <td class="p-2"><span class="col-form-label-sm text-uppercase display-4">Satuan</span></td>
                                 <td class="p-2">
                                     <select id="satuan" name="satuan" class="form-control" required>
-                                        @if ($mode=='edit')
+                                        {{-- @if ($mode=='edit')
                                             @foreach ($satuan as $item)
                                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endforeach
-                                        @endif
+                                        @endif --}}
                                     </select>
                                 </td>
                             </tr>

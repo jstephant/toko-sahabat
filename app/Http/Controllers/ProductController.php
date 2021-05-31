@@ -54,7 +54,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        $code = $this->sProduct->generateCode('code', 8);
+        $code = $this->sGlobal->generateCode('code', 'product', 'code', 8);
         $sub_category = $this->sSubCategory->getActive();
         $satuan = $this->sSatuan->getActive();
         $data = array(
@@ -131,6 +131,8 @@ class ProductController extends Controller
         $product = $this->sProduct->findById($id);
         $sub_category = $this->sSubCategory->getActive();
         $satuan = $this->sSatuan->getActive();
+        $price_list = $this->sPriceList->findItemByDate($id);
+
         $data = array(
             'title'        => 'Barang',
             'active_menu'  => 'Barang',
@@ -138,6 +140,7 @@ class ProductController extends Controller
             'product'      => $product,
             'sub_category' => $sub_category,
             'satuan'       => $satuan,
+            'price_list'   => $price_list,
         );
 
         return $this->sGlobal->view('product.edit', $data);
@@ -154,7 +157,9 @@ class ProductController extends Controller
         $satuan = $request->satuan;
         $status = $request->status;
         $image_name = $request->image_name;
-        $updated_by = $request->session()->get('id');
+        $active_at = $request->active_at;
+        $price_list = $request->price_list;
+        $user_id = $request->session()->get('id');
 
         if ($request->hasFile('product_image'))
         {
@@ -165,9 +170,9 @@ class ProductController extends Controller
             'name'            => $name,
             'sub_category_id' => $sub_category,
             'hpp'             => $hpp,
-            'is_active'       => $status,
             'image_name'      => $image_name,
-            'updated_by'      => $updated_by,
+            'is_active'       => $status,
+            'updated_by'      => $user_id,
             'updated_at'      => date('Y-m-d H:i:s')
         );
 
@@ -181,6 +186,24 @@ class ProductController extends Controller
         if(!$product_satuan['status'])
         {
             return redirect()->back()->with('error', $product_satuan['message']);
+        }
+
+        $last_price_list = $this->sPriceList->findByDate($active_at, $product_id);
+        if($last_price_list)
+        {
+            // hapus dari pricelist khusus tgl tertentu aja
+            $deleted = $this->sPriceList->deleteByIdDate($product_id, $active_at);
+        }
+
+        foreach ($satuan as $key => $value) {
+            $input_price_list = array(
+                'product_id' => $product_id,
+                'satuan_id'  => $value,
+                'price'      => $price_list[$key],
+                'active_at'  => $active_at,
+                'created_by' => $user_id,
+            );
+            $created_price_list = $this->sPriceList->create($input_price_list);
         }
 
         return redirect()->route('product.index')->with('success', 'Data berhasil diupdate');
@@ -204,5 +227,11 @@ class ProductController extends Controller
             return redirect()->back()->with('error', $deleted['message']);
         }
         return redirect()->route('product.index')->with('success', 'Data berhasil dihapus');
+    }
+
+    public function getProductSatuan($id)
+    {
+        $satuan = $this->sProduct->getProductSatuanById($id);
+        return response()->json($satuan, 200);
     }
 }

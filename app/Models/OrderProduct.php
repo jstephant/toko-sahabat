@@ -7,19 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class OrderProduct extends Model
 {
     protected $table = 'order_product';
+    protected $fillable = ['order_id', 'product_id', 'satuan_id', 'hpp', 'qty', 'price', 'sub_total', 'disc_pctg', 'disc_price', 'total'];
+    public $timestamps = false;
 
-     public function orders()
-     {
-         return $this->belongsTo(Orders::class, 'order_id');
-     }
+    public function orders()
+    {
+        return $this->belongsTo(Orders::class, 'order_id');
+    }
 
-     public function product()
-     {
-         return $this->belongsTo(Product::class, 'product_id');
-     }
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 
-     public function satuan()
-     {
-         return $this->belongsTo(Satuan::class, 'satuan_id');
-     }
+    public function satuan()
+    {
+        return $this->belongsTo(Satuan::class, 'satuan_id');
+    }
 }

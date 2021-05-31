@@ -2,11 +2,21 @@
 
 namespace App\Providers;
 
+use App\Services\Cart\ICart;
+use App\Services\Cart\SCart;
 use App\Services\Category\ICategory;
 use App\Services\Category\SCategory;
 use App\Services\Customer\ICustomer;
 use App\Services\Customer\SCustomer;
 use App\Services\IGlobal;
+use App\Services\Inventory\IInventory;
+use App\Services\Inventory\SInventory;
+use App\Services\Orders\IOrder;
+use App\Services\Orders\SOrder;
+use App\Services\Payment\IPayment;
+use App\Services\Payment\SPayment;
+use App\Services\PriceList\IPriceList;
+use App\Services\PriceList\SPriceList;
 use App\Services\Product\IProduct;
 use App\Services\Product\SProduct;
 use App\Services\Purchase\IPurchase;
@@ -53,5 +63,10 @@ class TokoSahabatProvider extends ServiceProvider
         $this->app->bind(ISupplier::class, SSupplier::class);
         $this->app->bind(IPurchase::class, SPurchase::class);
         $this->app->bind(ICustomer::class. SCustomer::class);
+        $this->app->bind(IOrder::class, SOrder::class);
+        $this->app->bind(IPayment::class, SPayment::class);
+        $this->app->bind(IInventory::class, SInventory::class);
+        $this->app->bind(IPriceList::class, SPriceList::class);
+        $this->app->bind(ICart::class, SCart::class);
     }
 }

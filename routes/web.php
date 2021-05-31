@@ -73,6 +73,7 @@ Route::prefix('barang')->group(function () {
     Route::get('/list-active', [App\Http\Controllers\ProductController::class, 'listActive'])->name('product.list.active');
     Route::get('/findbyid/{id}', [App\Http\Controllers\ProductController::class, 'findById'])->name('product.findbyid');
     Route::post('/delete/{id}', [App\Http\Controllers\ProductController::class, 'doDelete'])->name('product.delete.post');
+    Route::get('/product-satuan/{id}', [App\Http\Controllers\ProductController::class, 'getProductSatuan'])->name('product.satuan');
 });
 
 Route::prefix('pelanggan')->group(function () {
@@ -105,6 +106,27 @@ Route::prefix('beli')->group(function () {
     Route::get('/list-detail/{id}', [App\Http\Controllers\PurchaseController::class, 'listDetail'])->name('purchase.list.detail');
     Route::post('/update', [App\Http\Controllers\PurchaseController::class, 'doUpdate'])->name('purchase.edit.post');
     Route::post('/delete/{id}', [App\Http\Controllers\PurchaseController::class, 'doDelete'])->name('purchase.delete.post');
+});
+
+Route::prefix('order')->group(function () {
+    Route::get('/', [App\Http\Controllers\OrderController::class, 'index'])->name('order.index');
+    Route::get('/list', [App\Http\Controllers\OrderController::class, 'listOrder'])->name('order.list');
+    Route::get('/list-detail/{id}', [App\Http\Controllers\OrderController::class, 'listDetail'])->name('order.list.detail');
+    Route::post('/cancel/{id}', [App\Http\Controllers\OrderControler::class, 'doCancel'])->name('order.cancel.post');
+});
+
+Route::prefix('pos')->group(function() {
+    Route::get('/', [App\Http\Controllers\POSController::class, 'index'])->name('pos.index');
+    Route::get('/list-product', [App\Http\Controllers\POSController::class, 'listProduct'])->name('pos.list.product');
+    Route::post('/add-item', [App\Http\Controllers\POSController::class, 'addItem'])->name('pos.add.item');
+    Route::get('/get-price-list', [App\Http\Controllers\POSController::class, 'productPriceList'])->name('pos.price-list');
+    Route::get('/view-cart', [App\Http\Controllers\POSController::class, 'cartIndex'])->name('pos.cart');
+    Route::get('/detail-cart/{id}', [App\Http\Controllers\POSController::class, 'detailCart'])->name('pos.cart.detail');
+    Route::post('/set-satuan', [App\Http\Controllers\POSController::class, 'setSatuan'])->name('pos.cart.set-satuan');
+    Route::post('/set-discount', [App\Http\Controllers\POSController::class, 'setDiscount'])->name('pos.cart.set-discount');
+    Route::post('/set-qty', [App\Http\Controllers\POSController::class, 'setQty'])->name('pos.cart.set-qty');
+    Route::post('/remove-item', [App\Http\Controllers\POSController::class, 'removeItem'])->name('pos.cart.remove-item');
+    Route::post('/beli', [App\Http\Controllers\POSController::class, 'doCreateOrder'])->name('pos.beli');
 });
 
 Route::get('clear/session/{key}', [App\Http\Controllers\Controller::class, 'clearSession']);

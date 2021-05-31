@@ -153,13 +153,19 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{url('penjualan')}}">
+                                            <a class="nav-link" href="{{url('order')}}">
                                                 <span class="sidenav-mini-icon"><i class="ni ni-basket text-default"></i></span>
-                                                <span class="sidenav-normal">Penjualan</span>
+                                                <span class="sidenav-normal">Orders</span>
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
+							</li>
+                            <li class="nav-item">
+								<a class="nav-link" href="{{url('pos')}}">
+									<i class="ni ni-hat-3 text-info"></i>
+									<span class="nav-link-text">POS</span>
+								</a>
 							</li>
 						</ul>
 					</div>
@@ -191,7 +197,7 @@
                             </form>
                         @endif
                         <!-- Navbar links -->
-                        <ul class="navbar-nav align-items-center  ml-md-auto ">
+                        <ul class="navbar-nav align-items-center ml-md-auto">
                             <li class="nav-item d-xl-none">
                                 <!-- Sidenav toggler -->
                                 <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin" data-target="#sidenav-main">
@@ -202,14 +208,30 @@
                                     </div>
                                 </div>
                             </li>
+                            <li class="nav-item d-sm-none">
+                                <a class="nav-link" href="#" data-action="search-show" data-target="#navbar-search-main">
+                                  <i class="ni ni-zoom-split-in"></i>
+                                </a>
+                              </li>
                         </ul>
                     <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
+                        {{-- @if (session('role_id')!=1) --}}
+                            <li class="nav-item">
+                                @if ($show_btn_cart==1)
+                                    <a href="{{ url('pos/view-cart') }}" class="btn btn-icon bg-white {{ (session('total_item')==0) ? 'no-modal' : ''}}" id="btn_total_cart">
+                                        <span><i class="ni ni-basket"></i></span>
+                                        @if(session('total_item') && session('total_item')>0)
+                                            <span class="badge badge-md badge-circle badge-floating badge-default border-white" id="total_item_cart">{{ session('total_item') }}</span>
+                                        @endif
+                                    </a>
+                                @endif
+                            </li>
+                        {{-- @endif --}}
                         <li class="nav-item dropdown">
                             <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <div class="media align-items-center">
                                     <span class="avatar avatar-sm rounded-circle">
                                         {{ substr(strtoupper(session('user_name')), 0, 1)}}
-                                        {{-- <img alt="Image placeholder" src="../../assets/img/theme/team-4.jpg"> --}}
                                     </span>
                                     <div class="media-body  ml-2  d-none d-lg-block">
                                         <span class="mb-0 text-sm text-white font-weight-bold">{{ session('user_name') }}</span>

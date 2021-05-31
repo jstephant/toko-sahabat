@@ -64,11 +64,11 @@
 
                     var content = "";
                     content += `<tr>`;
-                    content += `<td><span class="x1">` + value.product.code +' - ' + value.product.name + `<br>Satuan: ` + value.satuan.name + `</span></td>`;
+                    content += `<td><span class="x1">` + value.product.code +' - ' + value.product.name + `<br><span class="badge badge-default">` + value.satuan.name + `</span></span></td>`;
                     content += `<td><span class="x2">` + value.qty + `</span></td>`;
                     content += `<td><span class="x3">` + value.price + `</span></td>`;
                     content += `<td><span class="x4">` + value.sub_total + `</span></td>`;
-                    content += `<td><span class="x5">(%): ` + value.disc_pctg + `<br>Rp: ` + value.disc_price +`</span></td>`;
+                    content += `<td><span class="x5">` + value.disc_price +`</span></td>`;
                     content += `<td><span class="x6">` + value.total + `</span></td>`;
                     content += `<td>`;
                     content += link_edit;

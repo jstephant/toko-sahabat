@@ -48,7 +48,7 @@ class PurchaseController extends Controller
 
     public function create()
     {
-        $code = $this->sPurchase->generateCode('purchase_number', 8);
+        $code = $this->sGlobal->generateCode('code', 'purchase', 'purchase_number', 8);
         $supplier = $this->sSupplier->getActive();
         $satuan = $this->sSatuan->getActive();
         $data = array(
@@ -94,7 +94,7 @@ class PurchaseController extends Controller
             'sub_total'       => $sub_total_all,
             'disc_price'      => $discount_all,
             'total'           => $total_all,
-            'status_id'       => 1,
+            'status_id'       => 2,
             'created_by'      => $created_by,
         );
 
