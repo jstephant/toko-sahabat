@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderProduct extends Model
+class OrderDetail extends Model
 {
-    protected $table = 'order_product';
+    protected $table = 'order_detail';
     protected $fillable = ['order_id', 'product_id', 'satuan_id', 'hpp', 'qty', 'price', 'sub_total', 'disc_pctg', 'disc_price', 'total'];
     public $timestamps = false;
 

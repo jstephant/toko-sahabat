@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PurchaseProduct extends Model
+class PurchaseDetail extends Model
 {
-    protected $table = 'purchase_product';
+    protected $table = 'purchase_detail';
     protected $fillable = ['purchase_id', 'product_id', 'satuan_id', 'qty', 'price', 'sub_total', 'disc_pctg', 'disc_price','total'];
     public $timestamps = false;
 

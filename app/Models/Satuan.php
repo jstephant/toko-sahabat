@@ -11,14 +11,14 @@ class Satuan extends Model
     protected $fillable = ['code', 'name', 'qty'];
     public $timestamps = false;
 
-    public function order_product()
+    public function order_detail()
     {
-        return $this->hasMany(OrderProduct::class, 'satuan_id', 'id');
+        return $this->hasMany(OrderDetail::class, 'satuan_id', 'id');
     }
 
-    public function purchase_product()
+    public function purchase_detail()
     {
-        return $this->hasMany(PurchaseProduct::class, 'satuan_id', 'id');
+        return $this->hasMany(PurchaseDetail::class, 'satuan_id', 'id');
     }
 
     public function product_price_list()

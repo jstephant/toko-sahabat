@@ -9,7 +9,7 @@ class Orders extends Model
     protected $table = 'orders';
     protected $primaryKey = 'id';
     protected $fillable = ['order_code', 'order_date', 'cart_id', 'customer_id', 'sub_total', 'disc_price', 'total',
-                        'delivery_address', 'notes', 'payment_status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'];
+                        'delivery_address', 'notes', 'payment_status_id', 'status_id', 'created_by', 'created_at', 'updated_by', 'updated_at'];
 
     public function cart()
     {
@@ -31,9 +31,9 @@ class Orders extends Model
         return $this->belongsTo(TransactionStatus::class, 'status_id');
     }
 
-    public function order_product()
+    public function order_detail()
     {
-        return $this->hasMany(OrderProduct::class, 'order_id', 'id');
+        return $this->hasMany(OrderDetail::class, 'order_id', 'id');
     }
 
     public function created_user()
@@ -44,5 +44,15 @@ class Orders extends Model
     public function updated_user()
     {
         return $this->belongsTo(Users::class, 'updated_by');
+    }
+
+    public function getCreatedAtAttribute($date)
+    {
+        return date('j F Y H:i', strtotime($date));
+    }
+
+    public function getUpdatedAtAttribute($date)
+    {
+        return ($date) ? date('j F Y H:i', strtotime($date)) : null;
     }
 }

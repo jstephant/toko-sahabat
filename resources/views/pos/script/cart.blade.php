@@ -10,7 +10,7 @@
             url: APP_URL + '/pos/detail-cart/' + $('#cart_id').val(),
             dataType: "json",
             success: function (response) {
-                $('#total_view').text('Rp' + response.header.total)
+                $('#total_view').text(response.header.text_total)
                 $('#btn_save').text('Beli (' + Object.keys(response.detail).length + ')')
                 $('#detail_product').append(response.content)
             }
@@ -103,9 +103,11 @@
             success: function (response) {
                 if(response.header)
                 {
-                    $('#total_view').text('Rp' + response.header.total)
+                    $('#total_view').text(response.header.text_total)
                     $('#btn_save').text('Beli (' + response.total_item + ')')
                 }
+                selected_item.remove();
+                if(response.total_item==0) location.reload()
             },
         })
     })
@@ -127,7 +129,7 @@
             success: function (response) {
                 if(response.detail)
                 {
-                    $('#total_view').text('Rp' + response.header.total)
+                    $('#total_view').text(response.header.text_total)
                     var content_disc_pctg = ``
                     var content_disc_price = ``
                     if(response.detail.disc_pctg>0)
@@ -137,7 +139,7 @@
 
                     if(response.detail.disc_price>0)
                     {
-                        content_disc_price += `<small><del>Rp` + response.detail.disc_price + `</del></small>`
+                        content_disc_price += `<small class="money"><del>Rp` + response.detail.text_disc_price + `</del></small>`
                     }
 
                     var content_discount = content_disc_pctg + content_disc_price
@@ -150,7 +152,7 @@
                     selected_item.find('.edit-discount').data('disc_pctg', response.detail.disc_pctg)
                     selected_item.find('.edit-discount').data('disc_price', response.detail.disc_price)
                     selected_item.find('.discount-text').html(content_discount)
-                    selected_item.find('.item-total-text').text('Rp' + response.detail.total)
+                    selected_item.find('.item-total-text').text(response.detail.text_total)
 
                     var btn_min = selected_item.find('.min-item')
                     var value_min = selected_item.find('.input-qty').attr('min')
@@ -179,6 +181,7 @@
                     }
 
                     $(selected_item).removeClass('selected-item')
+                    $('.money').mask('#.##0', {reverse: true})
                 }
             }
         })

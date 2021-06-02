@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Cart;
 use App\Models\Orders;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\TransactionStatus;
@@ -19,15 +20,17 @@ class SGlobal implements IGlobal
     private $orders;
     private $transactionStatus;
     private $cart;
+    private $payment;
 
     public function __construct(Product $product, Purchase $purchase, Orders $orders,
-        TransactionStatus $transactionStatus, Cart $cart)
+        TransactionStatus $transactionStatus, Cart $cart, Payment $payment)
     {
         $this->product = $product;
         $this->purchase = $purchase;
         $this->orders = $orders;
         $this->transactionStatus = $transactionStatus;
         $this->cart = $cart;
+        $this->payment = $payment;
     }
 
     public function curlAPI($type, $url, $request = null, $content_type = '', $headers = array())

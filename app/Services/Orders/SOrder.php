@@ -2,7 +2,7 @@
 
 namespace App\Services\Orders;
 
-use App\Models\OrderProduct;
+use App\Models\OrderDetail;
 use App\Models\Orders;
 use App\Models\Product;
 use App\Services\Orders\IOrder;
@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Log;
 class SOrder implements IOrder
 {
     private $orders;
-    private $orderProduct;
+    private $orderDetail;
     private $product;
 
-    public function __construct(Orders $orders, OrderProduct $orderProduct, Product $product)
+    public function __construct(Orders $orders, OrderDetail $orderDetail, Product $product)
     {
         $this->orders = $orders;
-        $this->orderProduct = $orderProduct;
+        $this->orderDetail = $orderDetail;
         $this->product = $product;
     }
 
@@ -106,7 +106,7 @@ class SOrder implements IOrder
 
         try {
             DB::beginTransaction();
-            $new = OrderProduct::create($input);
+            $new = OrderDetail::create($input);
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -128,7 +128,7 @@ class SOrder implements IOrder
 
         try {
             DB::beginTransaction();
-            $update = OrderProduct::where('order_id', $id)->where('product_id', $item_id)->update($input);
+            $update = OrderDetail::where('order_id', $id)->where('product_id', $item_id)->update($input);
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -150,7 +150,7 @@ class SOrder implements IOrder
 
         try {
             DB::beginTransaction();
-            $deleted = OrderProduct::where('order_id', $id)->where('product_id', $item_id)->delete();
+            $deleted = OrderDetail::where('order_id', $id)->where('product_id', $item_id)->delete();
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -172,7 +172,7 @@ class SOrder implements IOrder
 
         try {
             DB::beginTransaction();
-            $deleted = OrderProduct::where('order_id', $id)->delete();
+            $deleted = OrderDetail::where('order_id', $id)->delete();
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -187,7 +187,7 @@ class SOrder implements IOrder
 
     public function findDetailById($id)
     {
-        return $this->orderProduct->with(['product', 'satuan'])->where('order_id', $id)->get();
+        return $this->orderDetail->with(['product', 'satuan'])->where('order_id', $id)->get();
     }
 
     public function listOrder($start_date, $end_date, $status, $keyword, $start, $length, $order)
@@ -199,11 +199,11 @@ class SOrder implements IOrder
                                 'transaction_status',
                                 'created_user'    => function($q) { $q->select('id', 'name'); },
                                 'updated_user'    => function($q) { $q->select('id', 'name'); },
-                                'order_product.product.sub_category',
-                                'order_product.satuan'
+                                'order_detail.product.product_sub_category',
+                                'order_detail.satuan'
                             ])
                           ->whereBetween('order_date', [$start_date, $end_date])
-                          ->where('status_id', 1);
+                          ->where('status_id', 2);
         if($status)
         {
             $orders = $orders->where('payment_status_id', $status);
@@ -235,7 +235,7 @@ class SOrder implements IOrder
         return $data;
     }
 
-    public function listProduct($sub_category, $keyword, $start, $length)
+    public function listProduct($sub_category, $keyword, $last_id=null)
     {
         $products = $this->product
                          ->with([
@@ -254,19 +254,17 @@ class SOrder implements IOrder
             $products = $products->where('name', 'like', '%'.$keyword.'%');
         }
 
-        $count = $products->count();
-
-        if($length!=-1)
+        if($last_id && $last_id!=0)
         {
-            $products = $products->offset($start)->limit($length);
+            $products = $products->where('id', '<', $last_id);
         }
 
-        $products = $products->get();
+        $product_last_id = $products->limit(20)->orderby('id', 'asc')->first();
+        $products = $products->limit(20)->orderby('id', 'desc')->get();
 
         $data = [
-            'recordsTotal'    => $count,
-            'recordsFiltered' => $count,
-            'data'	          => $products,
+            'data'    => $products,
+            'last_id' => ($product_last_id) ? $product_last_id->id : 0,
         ];
 
         return $data;
@@ -279,6 +277,6 @@ class SOrder implements IOrder
 
     public function findDetailByIdProduct($order_id, $product_id)
     {
-        return $this->orderProduct->where('order_id', $order_id)->where('product_id', $product_id)->first();
+        return $this->orderDetail->where('order_id', $order_id)->where('product_id', $product_id)->first();
     }
 }

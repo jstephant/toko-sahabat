@@ -45,10 +45,11 @@
         {{-- swiper --}}
 		<link rel="stylesheet" type="text/css" href="https://unpkg.com/swiper/swiper-bundle.min.css">
 		{{-- <link rel="stylesheet" href="{{ $asset('css/swiper-custom.css')}}" /> --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 	</head>
     <body>
         <!-- Sidenav -->
-        <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+        <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
             <div class="scrollbar-inner">
                 <!-- Brand -->
                 <div class="sidenav-header  d-flex  align-items-center">
@@ -175,7 +176,7 @@
         <!-- Main content -->
         <div class="main-content" id="panel">
             <!-- Topnav -->
-            <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
+            <nav class="navbar navbar-top sticky-top navbar-expand navbar-dark bg-primary border-bottom">
                 <div class="container-fluid">
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         @if ($edit_mode==1)
@@ -214,16 +215,20 @@
                                 </a>
                               </li>
                         </ul>
-                    <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
+                        <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
                         {{-- @if (session('role_id')!=1) --}}
                             <li class="nav-item">
-                                @if ($show_btn_cart==1)
-                                    <a href="{{ url('pos/view-cart') }}" class="btn btn-icon bg-white {{ (session('total_item')==0) ? 'no-modal' : ''}}" id="btn_total_cart">
-                                        <span><i class="ni ni-basket"></i></span>
-                                        @if(session('total_item') && session('total_item')>0)
-                                            <span class="badge badge-md badge-circle badge-floating badge-default border-white" id="total_item_cart">{{ session('total_item') }}</span>
-                                        @endif
-                                    </a>
+                                @if (session('show_cart')==1)
+                                    @if(session('total_item') && session('total_item')>0)
+                                        <a id="btn_total_cart" href="{{ url('pos/view-cart') }}" class="btn btn-icon btn-sm bg-white">
+                                            <span><i class="ni ni-basket"></i></span>
+                                            <span id="item_cart_text" class="badge badge-sm badge-circle badge-floating badge-default border-white" style="top: -70%; left: 10px !important">{{ session('total_item') }}</span>
+                                        </a>
+                                    @else
+                                        <a id="btn_total_cart" href="#" class="btn btn-icon btn-sm bg-white" >
+                                            <span><i class="ni ni-basket"></i></span>
+                                        </a>
+                                    @endif
                                 @endif
                             </li>
                         {{-- @endif --}}
@@ -297,6 +302,8 @@
         <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
         <script src="https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.min.js"></script>
         <script src="https://cdn.datatables.net/fixedcolumns/3.3.2/js/dataTables.fixedColumns.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
 		<div class="backdrop d-xl-none" data-action="sidenav-unpin" data-target="undefined"></div>
 		<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"><div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div></div>

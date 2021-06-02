@@ -41,9 +41,7 @@
 							</div>
 						</div>
 						<input type="hidden" id="cart_id" name="cart_id" value="{{ session('cart_id') }}">
-						<input type="hidden" id="start" name="start" value="0">
-						<input type="hidden" id="next_start" name="next_start" value="0">
-						<input type="hidden" name="length" value="10">
+						<input type="hidden" id="last_id" name="last_id" value="0">
 					</div>
 				</div>
 			<div>

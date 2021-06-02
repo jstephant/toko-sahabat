@@ -3,7 +3,7 @@
 namespace App\Services\Purchase;
 
 use App\Models\Purchase;
-use App\Models\PurchaseProduct;
+use App\Models\PurchaseDetail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -11,12 +11,12 @@ use Exception;
 class SPurchase implements IPurchase
 {
     private $purchase;
-    private $purchaseProduct;
+    private $purchaseDetail;
 
-    public function __construct(Purchase $purchase, PurchaseProduct $purchaseProduct)
+    public function __construct(Purchase $purchase, PurchaseDetail $purchaseDetail)
     {
         $this->purchase = $purchase;
-        $this->purchaseProduct = $purchaseProduct;
+        $this->purchaseDetail = $purchaseDetail;
     }
 
     public function create($input)
@@ -136,7 +136,7 @@ class SPurchase implements IPurchase
 
         try {
             DB::beginTransaction();
-            $new = PurchaseProduct::create($input);
+            $new = PurchaseDetail::create($input);
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -158,7 +158,7 @@ class SPurchase implements IPurchase
 
         try {
             DB::beginTransaction();
-            $update = PurchaseProduct::where('purchase_id', $id)->where('product_id', $item_id)->update($input);
+            $update = PurchaseDetail::where('purchase_id', $id)->where('product_id', $item_id)->update($input);
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -180,7 +180,7 @@ class SPurchase implements IPurchase
 
         try {
             DB::beginTransaction();
-            $deleted = PurchaseProduct::where('purchase_id', $id)->where('product_id', $item_id)->delete();
+            $deleted = PurchaseDetail::where('purchase_id', $id)->where('product_id', $item_id)->delete();
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -202,7 +202,7 @@ class SPurchase implements IPurchase
 
         try {
             DB::beginTransaction();
-            $deleted = PurchaseProduct::where('purchase_id', $id)->delete();
+            $deleted = PurchaseDetail::where('purchase_id', $id)->delete();
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -217,7 +217,7 @@ class SPurchase implements IPurchase
 
     public function findDetailById($id)
     {
-        return $this->purchaseProduct
+        return $this->purchaseDetail
                     ->with(['product', 'satuan'])
                     ->where('purchase_id', $id)
                     ->get();
@@ -225,7 +225,7 @@ class SPurchase implements IPurchase
 
     public function findDetailByProduct($purchase_id, $product_id)
     {
-        return $this->purchaseProduct
+        return $this->purchaseDetail
                     ->with(['product', 'satuan'])
                     ->where('purchase_id', $purchase_id)
                     ->where('product_id', $product_id)

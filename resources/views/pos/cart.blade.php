@@ -6,14 +6,14 @@
         <div class="row">
             <div class="col-12">
                 <div class="card shadow mt-5 mb-5">
-                    <form class="form-basic needs-validation" novalidate method="post" role="form" action="{{ route('pos.beli')}}" enctype="multipart/form-data">
+                    <form class="form-basic needs-validation" novalidate method="post" role="form" action="{{ route('pos.update-cart')}}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <div class="row text-right">
-                                        <div class="col-12">
-                                            <h3 id="total_view" class="text-warning">0</h3>
+                                        <div class="col-12 text-md-left">
+                                            <h3 class="text-warning">Rp <span id="total_view" class="money">0</span></h3>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -41,7 +41,10 @@
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label for="customer_name" class="col-form-label-sm text-uppercase display-4">Nama Pelanggan</label>
-                                                <input type="text" id="customer_name" name="customer_name" class="form-control" autocomplete="off" value="{{ ($customer_name) ? $customer_name : (($cart->customer) ? $cart->customer->name : '') }}">
+                                                <input type="text" id="customer_name" name="customer_name" class="form-control @error('customer_name') 'is-invalid' @enderror" autocomplete="off" value="{{ (old('customer_name')) ? old('customer_name') : (($customer_name) ? $customer_name : (($cart->customer) ? $cart->customer->name : '')) }}">
+                                                @error('customer_name')
+                                                    <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
@@ -49,7 +52,10 @@
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label for="customer_phone" class="col-form-label-sm text-uppercase display-4">No. Telp</label>
-                                                <input type="tel" id="customer_phone" name="customer_phone" class="form-control" autocomplete="off" value="{{ ($customer_phone) ? $customer_phone : (($cart->customer) ? $cart->customer->mobile_phone : '') }}">
+                                                <input type="tel" id="customer_phone" name="customer_phone" class="form-control @error('customer_phone') 'is-invalid' @enderror" autocomplete="off" value="{{ (old('customer_phone')) ? old('customer_phone') : (($customer_phone) ? $customer_phone : (($cart->customer) ? $cart->customer->mobile_phone : '')) }}">
+                                                @error('customer_phone')
+                                                    <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
@@ -57,7 +63,7 @@
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label for="notes" class="col-form-label-sm text-uppercase display-4">Notes</label>
-                                                <textarea class="form-control" id="notes" name="notes" rows="3">{{ $cart->notes }}</textarea>
+                                                <textarea class="form-control" id="notes" name="notes" rows="2">{{ $cart->notes }}</textarea>
                                             </div>
                                         </div>
                                     </div>
