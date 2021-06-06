@@ -8,7 +8,7 @@ use App\Services\IDefaultDetail;
 interface IOrder extends IDefault, IDefaultDetail
 {
     public function listOrder($start_date, $end_date, $status, $keyword, $start, $length, $order);
-    public function listProduct($sub_category, $keyword, $start, $length);
+    public function listProduct($sub_category, $keyword, $last_id=null);
     public function findByCartId($cart_id);
     public function findDetailByIdProduct($order_id, $product_id);
 }

@@ -1,8 +1,8 @@
 <div class="modal fade" id="modal-set-discount" tabindex="-1" role="dialog" aria-labelledby="modal-set-diskon" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-sm" role="document">
 		<div class="modal-content">
-            <div class="modal-header justify-content-center bg-default">
-                <h5 id="title" class="modal-title text-white">Set Discount</h5>
+            <div class="modal-header justify-content-center bg-primary">
+                <h5 id="title" class="modal-title text-white">Discount</h5>
             </div>
             <div class="modal-body justify-content-center">
                 <div class="row">
@@ -26,7 +26,7 @@
                     <input type="hidden" id="cart_id_set_discount">
                     <input type="hidden" id="product_id_set_discount">
                     <input type="hidden" id="sub_total_set_discount">
-                    <button type="button" class="btn btn-facebook" id="btn_set_discount" name="btn_set_discount">Set</button>
+                    <button type="button" class="btn btn-success" id="btn_set_discount" name="btn_set_discount">Done</button>
                 </div>
             </div>
 		</div>
@@ -93,7 +93,7 @@
 
                     if(response.detail.disc_price>0)
                     {
-                        content_disc_price += `<small><del>Rp` + response.detail.disc_price + `</del></small>`;
+                        content_disc_price += `<small><del>Rp` + response.detail.text_disc_price + `</del></small>`;
                     }
 
                     var content_discount = content_disc_pctg + content_disc_price;
@@ -101,13 +101,13 @@
                     {
                         content_discount = `<small><del>Discount</del></small>`;
                     }
-                    $('#total_view').text(response.header.total);
+                    $('#total_view').text(response.header.text_total);
                     var selected_item = $(document).find('.selected-item');
                     selected_item.find('.edit-discount').data('sub_total', response.detail.sub_total);
                     selected_item.find('.edit-discount').data('disc_pctg', response.detail.disc_pctg);
                     selected_item.find('.edit-discount').data('disc_price', response.detail.disc_price);
                     selected_item.find('.discount-text').html(content_discount);
-                    selected_item.find('.item-total-text').text('Rp' + response.detail.total);
+                    selected_item.find('.item-total-text').text(response.detail.text_total);
                     $(selected_item).removeClass('selected-item');
                 }
             }

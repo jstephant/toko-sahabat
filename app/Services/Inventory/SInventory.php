@@ -2,22 +2,22 @@
 
 namespace App\Services\Inventory;
 
-use App\Models\OrderProduct;
-use App\Models\PurchaseProduct;
+use App\Models\OrderDetail;
+use App\Models\PurchaseDetail;
 use App\Models\Satuan;
 use App\Services\Inventory\IInventory;
 
 class SInventory implements IInventory
 {
-    private $purchaseProduct;
+    private $purchaseDetail;
     private $satuan;
-    private $orderProduct;
+    private $orderDetail;
 
-    public function __construct(Satuan $satuan, PurchaseProduct $purchaseProduct, OrderProduct $orderProduct)
+    public function __construct(Satuan $satuan, PurchaseDetail $purchaseDetail, OrderDetail $orderDetail)
     {
-        $this->purchaseProduct = $purchaseProduct;
+        $this->purchaseDetail = $purchaseDetail;
         $this->satuan = $satuan;
-        $this->orderProduct = $orderProduct;
+        $this->orderDetail = $orderDetail;
     }
 
     public function getStockIn($product_id, $satuan_id)
@@ -27,7 +27,7 @@ class SInventory implements IInventory
 
         $stock_in = 0;
         $stock_purchase = 0;
-        $purchases = $this->purchaseProduct
+        $purchases = $this->purchaseDetail
                          ->with('purchase')
                          ->where('product_id', $product_id)
                          ->wherehas('purchase', function($q) {
@@ -44,7 +44,7 @@ class SInventory implements IInventory
             }
             $stock_in = $stock_purchase / $qty_request;
         }
-        return $stock_in;
+        return ceil($stock_in);
     }
 
     public function getStockOut($product_id, $satuan_id)
@@ -54,7 +54,7 @@ class SInventory implements IInventory
 
         $stock_out = 0;
         $stock_order = 0;
-        $orders = $this->orderProduct
+        $orders = $this->orderDetail
                          ->with('orders')
                          ->where('product_id', $product_id)
                          ->wherehas('orders', function($q) {
@@ -71,7 +71,7 @@ class SInventory implements IInventory
             }
             $stock_out = $stock_order / $qty_request;
         }
-        return $stock_out;
+        return ceil($stock_out);
     }
 
     public function getStock($product_id, $satuan_id)

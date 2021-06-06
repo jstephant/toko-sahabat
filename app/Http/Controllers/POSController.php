@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\POS\UpdateCustomerRequest;
 use App\Services\Cart\SCart;
 use App\Services\Customer\SCustomer;
 use App\Services\Inventory\SInventory;
 use App\Services\Orders\SOrder;
+use App\Services\Payment\SPayment;
 use App\Services\PriceList\SPriceList;
 use App\Services\Product\SProduct;
 use App\Services\Satuan\SSatuan;
@@ -25,10 +27,11 @@ class POSController extends Controller
     private $sSubCategory;
     private $sInventory;
     private $sPriceList;
+    private $sPayment;
 
     public function __construct(SGlobal $sGlobal, SCart $sCart, SProduct $sProduct, SSatuan $sSatuan,
         SCustomer $sCustomer, SOrder $sOrder, SSubCategory $sSubCategory, SInventory $sInventory,
-        SPriceList $sPriceList)
+        SPriceList $sPriceList, SPayment $sPayment)
     {
         $this->checkSession();
         $this->sGlobal = $sGlobal;
@@ -40,27 +43,123 @@ class POSController extends Controller
         $this->sSubCategory = $sSubCategory;
         $this->sInventory = $sInventory;
         $this->sPriceList = $sPriceList;
+        $this->sPayment = $sPayment;
     }
 
     public function index(Request $request)
     {
-        $user_id = $request->session()->get('user_id');
+        $user_id = $request->session()->get('id');
         $sub_category = $this->sSubCategory->getActive();
         $cart = $this->sCart->findPendingByDate(date('Y-m-d'), $user_id);
         $data = array(
             'title'         => 'POS',
             'active_menu'   => 'POS',
             'edit_mode'     => 0,
-            'show_btn_cart' => 1,
             'sub_category'  => $sub_category,
         );
         $total_item = '';
         if($cart && $cart->cart_detail) $total_item = count($cart->cart_detail);
 
+        $request->session()->put('show_cart', 1);
         $request->session()->put('cart_id', ($cart) ? $cart->id : '' );
         $request->session()->put('total_item', $total_item);
 
         return $this->sGlobal->view('pos.index', $data);
+    }
+
+    public function listProduct(Request $request)
+    {
+        $data = array(
+            'status'       => false,
+            'message'      => '',
+            'total_record' => 0,
+            'last_id'      => 0,
+            'content'      => '',
+        );
+
+        $sub_category = $request->sub_category;
+        $keyword = $request->keyword;
+        $last_id = $request->last_id;
+
+        $products = $this->sOrder->listProduct($sub_category, $keyword, $last_id);
+        if(count($products['data'])>0)
+        {
+            $content = "";
+            foreach ($products['data'] as $value) {
+                $value->thumbnail = ($value->image_name) ? url('images/product/thumbnail/'.$value->image_name) : url('images/product/thumbnail/default.png');
+                $value->stock = $this->sInventory->getStock($value->id, 1);
+                $class_stock = ($value->stock>0) ? 'text-success' : 'text-danger';
+
+                $price = 0;
+                $product_price = $this->sPriceList->getProductPriceBySatuan($value->id, 1);
+                if($product_price) $price = $product_price->price;
+
+                $satuan = $this->sProduct->getProductSatuanById($value->id);
+                $default_satuan_id = 1;
+                $product_satuan = '<div class="btn-group btn-group-toggle" data-toggle="buttons">';
+                foreach ($satuan as $i => $item_satuan) {
+                    if($i==0)
+                    {
+                        $default_satuan_id = $item_satuan->satuan_id;
+                        $product_satuan .= '<label for="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="btn btn-secondary select-satuan active focus">';
+                        $product_satuan .= '<input type="radio" name="satuan_name[]" id="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="radio-satuan" value="'. $item_satuan->satuan_id .'" checked=true>' . $item_satuan->name;
+                    } else {
+                        $product_satuan .= '<label for="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="btn btn-secondary select-satuan">';
+                        $product_satuan .= '<input type="radio" name="satuan_name[]" id="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="radio-satuan" value="'. $item_satuan->satuan_id .'" checked=true>' . $item_satuan->name;
+                    }
+                    $product_satuan .= '</label>';
+                }
+                $product_satuan .= '</div>';
+
+                $content .= '<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">';
+                $content .= '<div class="card">';
+                $content .= '<div class="card-body">';
+                $content .= '<input type="hidden" name="product_id[]" class="input-product-id" value="' . $value->id . '">';
+                $content .= '<input type="hidden" name="satuan_id[]" class="input-satuan-id" value="'.$default_satuan_id.'">';
+                $content .= '<div class="row mt-3 align-items-center">';
+                $content .= '<div class="col-auto">';
+                $content .= '<a href="#!" class="avatar avatar-xl rounded bg-white">';
+                $content .= '<img alt="" src="'.$value->thumbnail.'">';
+                $content .= '</a>';
+                $content .= '</div>';
+                $content .= '<div class="col ml--2">';
+                $content .= '<h5 class="mb-0">';
+                $content .= $value->name;
+                $content .= '</h5>';
+                $content .= '<span class="'. $class_stock .'">●</span>';
+                $content .= '<small class="ml-1 text-stock">Tersedia: ' . $value->stock . '</small>';
+                $content .= '<h5 class="mb-0">Rp<span class="text-price">' . number_format($price, 0, ',', '.') . '</span></h5>';
+                $content .= '</div>';
+
+                $content .= '<div class="col-lg-auto col-md-auto col-sm-auto col-xs-12 justify-content-end d-flex">';
+                if($value->stock > 0)
+                {
+                    $content .= '<input type="number" name="qty[]" class="form-control input-qty ml-2" value="1" min="1" max="'. $value->stock . '"style="padding:6px; display: inline-block !important; width: auto !important; height:100% !important;">';
+                    $content .= '<input type="hidden" name="price[]" class="input-price" value="' . $price . '">';
+                    $content .= '<button type="button" class="btn btn-icon btn-sm btn-facebook add-item ml-2">';
+                    $content .= '<span class="btn-inner--icon"><i class="ni ni-basket"></i></span>';
+                    $content .= '<span class="btn-inner--text">Add</span>';
+                    $content .= '</button>';
+                }
+                $content .= '</div>';
+                $content .= '</div>';
+                $content .= '<div class="row mt-3"><div class="col-lg-12">' .$product_satuan. '</div></div>';
+                $content .= '</div>';
+                $content .= '</div>';
+                $content .= '</div>';
+            }
+
+            $data['status'] = true;
+            $data['message'] = 'OK';
+            $data['last_id'] = $products['last_id'];
+            $data['total_record'] = count($products['data']);
+            $data['content'] = $content;
+
+        } else {
+            $data['message'] = 'No data to display';
+        }
+
+        return response()->json($data, 200);
     }
 
     public function addItem(Request $request)
@@ -70,7 +169,7 @@ class POSController extends Controller
         $qty = $request->qty;
         $price = $request->price;
 
-        $user_id = $request->session()->get('user_id');
+        $user_id = $request->session()->get('id');
 
         $cart = $this->sCart->findPendingByDate(date('Y-m-d'), $user_id);
         if(!$cart)
@@ -148,72 +247,37 @@ class POSController extends Controller
         return $data;
     }
 
-    public function updateQty(Request $request)
+    public function productPriceList(Request $request)
     {
-        $cart_id = $request->cart_id;
         $product_id = $request->product_id;
         $satuan_id = $request->satuan_id;
-        $qty = $request->qty;
-        $price = $request->price;
-        $sub_total = $request->sub_total;
-        $disc_pctg = $request->disc_pctg;
-        $disc_price = $request->disc_price;
-        $total = $request->total;
 
-        $input = array(
-            'satuan_id'  => $satuan_id,
-            'qty'        => $qty,
-            'price'      => $price,
-            'sub_total'  => $sub_total,
-            'disc_pctg'  => $disc_pctg,
-            'disc_price' => $disc_price,
-            'total'      => $total
-        );
+        $price = 0;
+        $product_price = $this->sPriceList->getProductPriceBySatuan($product_id, $satuan_id);
+        if($product_price) $price = $product_price->price;
 
-        $update_detail = $this->sCart->updateDetail($cart_id, $product_id, $input);
+        $text_price = number_format($price, 0, ',', '.');
 
-        return response()->json($update_detail, 200);
-    }
-
-    public function removeItem(Request $request)
-    {
-        $cart_id = $request->cart_id;
-        $product_id = $request->product_id;
-
-        $remove = $this->sCart->deleteDetail($cart_id, $product_id);
-
-        $hitung_total = $this->sCart->hitungTotal($cart_id);
-        $input_update = array(
-            'sub_total' => $hitung_total['sub_total'],
-            'disc_price' => $hitung_total['disc_price'],
-            'total' => $hitung_total['total'],
-        );
-        $updated = $this->sCart->update($cart_id, $input_update);
-
-        $cart = $this->sCart->findById($cart_id);
-        $cart_item = $this->sCart->findDetailById($cart_id);
-        $total_item = $cart_item->count();
+        $stock = $this->sInventory->getStock($product_id, $satuan_id);
 
         $data = array(
-            'header'     => $cart,
-            'total_item' => $total_item
+            'price'      => $price,
+            'text_price' => $text_price,
+            'stock'      => $stock,
         );
-
-        $request->session()->put('cart_id', $cart_id);
-        $request->session()->put('total_item', $total_item);
 
         return response()->json($data, 200);
     }
 
-    public function doCreateOrder(Request $request)
+    public function doUpdateCart(UpdateCustomerRequest $request)
     {
         $cart_id = $request->cart_id;
-        $customer_id = $request->customer_id;
+        $customer_id = $request->customer;
         $customer_name = $request->customer_name;
         $customer_phone = $request->customer_phone;
         $notes = $request->notes;
         $action = $request->action;
-        $user_id = $request->session()->get('user_id');
+        $user_id = $request->session()->get('id');
 
         if($action=='beli')
         {
@@ -233,7 +297,21 @@ class POSController extends Controller
                         return redirect()->back()->with('error', $new_customer['message']);
                     }
                     $customer_id = $new_customer['id'];
-                } else $customer_id = $customer->id;
+                } else {
+                    if($customer_name!=$customer->name)
+                    {
+                        $update_customer = array(
+                            'name'       => $customer_name,
+                            'updated_by' => $user_id,
+                        );
+                        $update_customer = $this->sCustomer->update($customer->id, $update_customer);
+                        if(!$update_customer['status'])
+                        {
+                            return redirect()->back()->with('error', $update_customer['message']);
+                        }
+                    }
+                    $customer_id = $customer->id;
+                }
             }
 
             $input = array(
@@ -241,52 +319,52 @@ class POSController extends Controller
                 'customer_name'  => $customer_name,
                 'customer_phone' => $customer_phone,
                 'notes'          => $notes,
-                'status_id'      => 2,
                 'updated_by'     => $user_id,
                 'updated_at'     => date('Y-m-d H:i:s'),
             );
 
             $update_cart = $this->sCart->update($cart_id, $input);
+        }
+        return redirect()->route('pos.payment', ['cart_id' => $cart_id]);
+    }
 
+    public function doCreateOrder(Request $request)
+    {
+        $cart_id = $request->cart_id;
+        $payment_type_id = $request->payment_type_id;
+        $total_pay = $request->total_pay;
+        $total_pay = str_replace('.', '', $total_pay);
+        $is_print_struk = $request->is_print_struk;
+
+        $action = $request->action;
+        $user_id = $request->session()->get('id');
+
+        //payment
+        if($action=='bayar')
+        {
             $cart = $this->sCart->findById($cart_id);
             if($cart)
             {
-                $cart_in_order = $this->sOrder->findByCartId($cart_id);
-                if(!$cart_in_order)
+                $input_order = array(
+                    'order_code'        => $cart->order_code,
+                    'order_date'        => $cart->order_date,
+                    'cart_id'           => $cart_id,
+                    'customer_id'       => $cart->customer_id,
+                    'sub_total'         => $cart->sub_total,
+                    'disc_price'        => $cart->disc_price,
+                    'total'             => $cart->total,
+                    'notes'             => $cart->notes,
+                    'payment_status_id' => 2,
+                    'status_id'         => 2,
+                    'created_by'        => $user_id,
+                );
+                $order = $this->sOrder->create($input_order);
+                if(!$order['status'])
                 {
-                    $input_order = array(
-                        'order_code' => $cart->order_code,
-                        'order_date' => $cart->order_date,
-                        'cart_id'    => $cart_id,
-                        'customer_id'=> $cart->customer_id,
-                        'sub_total'  => $cart->sub_total,
-                        'disc_price' => $cart->disc_price,
-                        'total'      => $cart->total,
-                        'notes'      => $notes,
-                        'status_id'  => 2,
-                        'created_by' => $user_id,
-                    );
-                    $order = $this->sOrder->create($input_order);
-                    if(!$order['status'])
-                    {
-                        return redirect()->back()->with('error', $order['message']);
-                    }
-                    $order_id = $order['id'];
-                } else {
-                    $order_id = $cart_in_order->id;
-                    $update_order = array(
-                        'customer_id'=> $cart->customer_id,
-                        'sub_total'  => $cart->sub_total,
-                        'disc_price' => $cart->disc_price,
-                        'total'      => $cart->total,
-                        'notes'      => $notes,
-                        'status_id'  => 2,
-                        'updated_by' => $user_id,
-                    );
-                    $order = $this->sOrder->update($order_id, $update_order);
+                    return redirect()->back()->with('error', $order['message']);
                 }
 
-                $delete_detail = $this->sOrder->deleteDetailAll($order_id);
+                $order_id = $order['id'];
 
                 foreach ($cart->cart_detail as $value) {
                     $input_order_detail = array(
@@ -302,133 +380,51 @@ class POSController extends Controller
                     );
                     $new_detail = $this->sOrder->createDetail($input_order_detail);
                 }
-            }
 
-            // $request->session()->put('cart_id', null);
-            // $request->session()->put('total_item', 0);
-        }
-        // lanjut ke payment
-        //return redirect()->route('pos.index');
-    }
+                $input_payment = array(
+                    'payment_code'    => $this->sGlobal->generateCode('code', 'payment', 'payment_code', 8),
+                    'payment_date'    => date('Y-m-d H:i:s'),
+                    'order_id'        => $order_id,
+                    'sub_total'       => $cart->sub_total,
+                    'disc_price'      => $cart->disc_price,
+                    'grand_total'     => $cart->total,
+                    'payment_type_id' => $payment_type_id,
+                    'pay_total'       => $total_pay,
+                    'pay_change'      => $total_pay-$cart->total,
+                    'status_id'       => 2,
+                    'created_by'      => $user_id,
+                );
 
-    public function listProduct(Request $request)
-    {
-        $data = array(
-            'status'       => false,
-            'message'      => '',
-            'total_record' => 0,
-            'start'        => 0,
-            'next_start'   => 0,
-            'content'      => '',
-        );
-
-        $sub_category = $request->sub_category;
-        $keyword = $request->keyword;
-        $start = $request->start;
-
-        $products = $this->sOrder->listProduct($sub_category, $keyword, $start, 20);
-        if($products['recordsTotal']>0)
-        {
-            $content = "";
-            foreach ($products['data'] as $value) {
-                $value->thumbnail = ($value->image_name) ? url('images/product/thumbnail/'.$value->image_name) : url('images/product/thumbnail/default.png');
-                $value->stock = $this->sInventory->getStock($value->id, 1);
-                $class_stock = ($value->stock>0) ? 'text-success' : 'text-danger';
-
-                $price = 0;
-                $product_price = $this->sPriceList->getProductPriceBySatuan($value->id, 1);
-                if($product_price) $price = $product_price->price;
-
-                $satuan = $this->sProduct->getProductSatuanById($value->id);
-                $default_satuan_id = 1;
-                $product_satuan = '<div class="btn-group btn-group-toggle" data-toggle="buttons">';
-                foreach ($satuan as $i => $item_satuan) {
-                    if($i==0)
-                    {
-                        $default_satuan_id = $item_satuan->satuan_id;
-                        $product_satuan .= '<label for="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="btn btn-secondary select-satuan active focus">';
-                        $product_satuan .= '<input type="radio" name="satuan_name[]" id="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="radio-satuan" value="'. $item_satuan->satuan_id .'" checked=true>' . $item_satuan->name;
-                    } else {
-                        $product_satuan .= '<label for="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="btn btn-secondary select-satuan">';
-                        $product_satuan .= '<input type="radio" name="satuan_name[]" id="product_'.$item_satuan->product_id.'_'.$item_satuan->satuan_id.'" class="radio-satuan" value="'. $item_satuan->satuan_id .'" checked=true>' . $item_satuan->name;
-                    }
-                    $product_satuan .= '</label>';
-                }
-                $product_satuan .= '</div>';
-
-                $content .= '<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">';
-                $content .= '<div class="card">';
-                $content .= '<div class="card-body">';
-                $content .= '<input type="hidden" name="product_id[]" class="input-product-id" value="' . $value->id . '">';
-                $content .= '<input type="hidden" name="satuan_id[]" class="input-satuan-id" value="'.$default_satuan_id.'">';
-                $content .= '<div class="row mt-3 align-items-center">';
-                $content .= '<div class="col-auto">';
-                $content .= '<a href="#!" class="avatar avatar-xl rounded bg-white">';
-                $content .= '<img alt="" src="'.$value->thumbnail.'">';
-                $content .= '</a>';
-                $content .= '</div>';
-                $content .= '<div class="col ml--2">';
-                $content .= '<h5 class="mb-0">';
-                $content .= $value->name;
-                $content .= '</h5>';
-                $content .= '<span class="'. $class_stock .'">●</span>';
-                $content .= '<small class="ml-1 text-stock">Tersedia: ' . $value->stock . '</small>';
-                $content .= '<h5 class="mb-0 text-price">Rp ' . $price . '</h5>';
-                $content .= '</div>';
-
-                $content .= '<div class="col-lg-auto col-md-auto col-sm-auto col-xs-12 justify-content-end d-flex">';
-                if($value->stock > 0)
+                $new_payment = $this->sPayment->create($input_payment);
+                if(!$new_payment['status'])
                 {
-                    $content .= '<input type="number" name="qty[]" class="form-control input-qty ml-2" value="1" min="1" max="'. $value->stock . '"style="padding:6px; display: inline-block !important; width: auto !important; height:100% !important;">';
-                    $content .= '<input type="hidden" name="price[]" class="input-price" value="' . $price . '">';
-                    $content .= '<button type="button" class="btn btn-icon btn-sm btn-facebook add-item ml-2">';
-                    $content .= '<span class="btn-inner--icon"><i class="ni ni-basket"></i></span>';
-                    $content .= '<span class="btn-inner--text">Add</span>';
-                    $content .= '</button>';
+                    return redirect()->back()->with('error', $new_payment['message']);
                 }
-                $content .= '</div>';
-                $content .= '</div>';
-                $content .= '<div class="row mt-3"><div class="col-lg-12">' .$product_satuan. '</div></div>';
-                $content .= '</div>';
-                $content .= '</div>';
-                $content .= '</div>';
+
+                $update_cart = array(
+                    'status_id' => 2,
+                    'updated_by' => $user_id,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                );
+                $updated_cart = $this->sCart->update($cart->id, $update_cart);
+                if(!$updated_cart['status'])
+                {
+                    return redirect()->back()->with('error', $updated_cart['message']);
+                }
             }
 
-            $data['status'] = true;
-            $data['message'] = 'OK';
-            $data['start'] = $start;
-            $data['next_start'] = ($products['recordsTotal'] <= 20) ? 1 : (($start==0) ? 1 : $start+1);
-            $data['content'] = $content;
-            $data['total_record'] = $products['recordsTotal'];
-        } else {
-            $data['message'] = 'No data to display';
+            $request->session()->put('cart_id', null);
+            $request->session()->put('total_item', 0);
         }
+        // if($is_print_struk=='on')
+        //     return redirect()->route('', );
 
-        return response()->json($data, 200);
-    }
-
-    public function productPriceList(Request $request)
-    {
-        $product_id = $request->product_id;
-        $satuan_id = $request->satuan_id;
-
-        $price = 0;
-        $product_price = $this->sPriceList->getProductPriceBySatuan($product_id, $satuan_id);
-        if($product_price) $price = $product_price->price;
-
-        $stock = $this->sInventory->getStock($product_id, $satuan_id);
-
-        $data = array(
-            'price' => $price,
-            'stock' => $stock,
-        );
-
-        return response()->json($data, 200);
+        return redirect()->route('pos.index')->with('success', 'Transaksi berhasil');
     }
 
     public function cartIndex(Request $request)
     {
-        $user_id = $request->session()->get('user_id');
+        $user_id = $request->session()->get('id');
         $cart = $this->sCart->findPendingByDate(date('Y-m-d'), $user_id);
         $customer = $this->sCustomer->getActive();
         $customer_name = $cart->customer_name;
@@ -439,7 +435,6 @@ class POSController extends Controller
             'active_menu'    => 'View Cart',
             'edit_mode'      => 1,
             'mode'           => 'edit',
-            'show_btn_cart'  => 0,
             'cart'           => $cart,
             'customer'       => $customer,
             'customer_name'  => $customer_name,
@@ -448,12 +443,17 @@ class POSController extends Controller
 
         );
 
+        if($cart->cart_detail->count()==0)
+            return redirect()->route('pos.index');
+
+        $request->session()->put('show_cart', 0);
         return $this->sGlobal->view('pos.cart', $data);
     }
 
     public function detailCart($id)
     {
         $cart = $this->sCart->findById($id);
+        $cart->text_total = number_format($cart->total, 0, ',', '.');
         $details = $this->sCart->findDetailById($id);
 
         $content = "";
@@ -473,7 +473,7 @@ class POSController extends Controller
                     <small class="mb-0 d-block">' . $value->product->name . '</small>
                     <span class="'. $class_stock .'">●</span>
                     <small class="text-stock">Tersedia: ' . $value->stock . '</small>
-                    <h5 class="mb-0 text-price">Rp' . $value->price . '</h5>';
+                    <h5 class="mb-0">Rp<span class="text-price">' . number_format($value->price, 0, ',', '.') . '</span></h5>';
 
                 $link_satuan =
                     '<a href="#" class="text-default p-0 edit-satuan" title="Pilih Satuan" data-toggle="modal" data-target="#modal-set-satuan"
@@ -513,7 +513,7 @@ class POSController extends Controller
 
                 if($value->disc_price>0)
                 {
-                    $content_disc_price .= '<small><del>Rp'. $value->disc_price .'</del></small>';
+                    $content_disc_price .= '<small>Rp<del>'. number_format($value->disc_price, 0, ',','.') .'</del></small>';
                 }
                 $content_discount = $content_disc_pctg.$content_disc_price;
                 if(!$content_discount)
@@ -538,7 +538,7 @@ class POSController extends Controller
 
                 $content .= '<div class="row align-items-center">';
                 $content .= '<div class="col mr-auto">'.$link_discount.'</div>';
-                $content .= '<div class="col text-right"><small class="item-total-text"> Rp'. $value->total . '</small></div>';
+                $content .= '<div class="col text-right"><small >Rp<span class="item-total-text">'. number_format($value->total, 0, ',', '.') . '</span></small></div>';
                 $content .= '</div>';
 
                 $content .= '<div class="row mt-3 align-items-center">';
@@ -569,7 +569,7 @@ class POSController extends Controller
         return response()->json($data, 200);
     }
 
-    public function setSatuan(Request $request)
+    public function updateSatuan(Request $request)
     {
         $cart_id = $request->cart_id;
         $product_id = $request->product_id;
@@ -582,12 +582,16 @@ class POSController extends Controller
             $product_price = $this->sPriceList->getProductPriceBySatuan($product_id, $satuan_id);
             $price_satuan = $product_price->price;
             $sub_total = ($detail->qty * $price_satuan);
-            $total = $sub_total - $detail->disc_price;
+            if($detail->disc_pctg>0)
+                $disc_price = ($detail->disc_pctg/100) * $sub_total;
+            else $disc_price = $detail->disc_price;
+            $total = $sub_total - $disc_price;
 
             $input = array(
                 'satuan_id' => $satuan_id,
                 'price'     => $price_satuan,
                 'sub_total' => $sub_total,
+                'disc_price'=> $disc_price,
                 'total'     => $total,
             );
 
@@ -602,7 +606,11 @@ class POSController extends Controller
             $updated = $this->sCart->update($cart_id, $input_update);
 
             $cart = $this->sCart->findById($cart_id);
+            $cart->text_total = number_format($cart->total, 0, ',', '.');
             $detail = $this->sCart->findDetailByIdProduct($cart_id, $product_id);
+            $detail->text_price = number_format($detail->price, 0, ',', '.');
+            $detail->text_disc_price = number_format($detail->disc_price, 0, ',', '.');
+            $detail->text_total = number_format($detail->total, 0, ',', '.');
         }
 
         $detail->stock = $this->sInventory->getStock($product_id, $satuan_id);
@@ -614,7 +622,7 @@ class POSController extends Controller
         return response()->json($data, 200);
     }
 
-    public function setDiscount(Request $request)
+    public function updateDiscount(Request $request)
     {
         $cart_id = $request->cart_id;
         $product_id = $request->product_id;
@@ -643,7 +651,11 @@ class POSController extends Controller
         }
 
         $cart = $this->sCart->findById($cart_id);
+        $cart->text_total = number_format($cart->total, 0, ',', '.');
         $detail = $this->sCart->findDetailByIdProduct($cart_id, $product_id);
+        $detail->text_price = number_format($detail->price, 0, ',', '.');
+        $detail->text_disc_price = number_format($detail->disc_price, 0, ',', '.');
+        $detail->text_total = number_format($detail->total, 0, ',', '.');
 
         $data = array(
             'header' => $cart,
@@ -652,7 +664,7 @@ class POSController extends Controller
         return response()->json($data, 200);
     }
 
-    public function setQty(Request $request)
+    public function updateQty(Request $request)
     {
         $cart_id = $request->cart_id;
         $product_id = $request->product_id;
@@ -685,7 +697,11 @@ class POSController extends Controller
         }
 
         $cart = $this->sCart->findById($cart_id);
+        $cart->text_total = number_format($cart->total, 0, ',', '.');
         $detail = $this->sCart->findDetailByIdProduct($cart_id, $product_id);
+        $detail->text_price = number_format($detail->price, 0, ',', '.');
+        $detail->text_disc_price = number_format($detail->disc_price, 0, ',', '.');
+        $detail->text_total = number_format($detail->total, 0, ',', '.');
         $detail->stock = $this->sInventory->getStock($product_id, $detail->satuan_id);
 
         $data = array(
@@ -693,5 +709,54 @@ class POSController extends Controller
             'detail' => $detail,
         );
         return response()->json($data, 200);
+    }
+
+    public function removeItem(Request $request)
+    {
+        $cart_id = $request->cart_id;
+        $product_id = $request->product_id;
+
+        $remove = $this->sCart->deleteDetail($cart_id, $product_id);
+
+        $hitung_total = $this->sCart->hitungTotal($cart_id);
+        $input_update = array(
+            'sub_total' => $hitung_total['sub_total'],
+            'disc_price' => $hitung_total['disc_price'],
+            'total' => $hitung_total['total'],
+        );
+        $updated = $this->sCart->update($cart_id, $input_update);
+
+        $cart = $this->sCart->findById($cart_id);
+        $cart->text_total = number_format($cart->total, 0, ',', '.');
+        $cart_item = $this->sCart->findDetailById($cart_id);
+        $total_item = $cart_item->count();
+        $data = array(
+            'header'     => $cart,
+            'total_item' => $total_item
+        );
+
+        $request->session()->put('cart_id', $cart_id);
+        $request->session()->put('total_item', $total_item);
+
+        return response()->json($data, 200);
+    }
+
+    public function paymentIndex(Request $request)
+    {
+        $cart_id = $request->cart_id;
+
+        $cart = $this->sCart->findById($cart_id);
+        $payment_method = $this->sPayment->getPaymentMethod();
+        $data = array(
+            'title'          => 'POS',
+            'active_menu'    => 'Detail Pesanan',
+            'edit_mode'      => 1,
+            'cart'           => $cart,
+            'payment_method' => $payment_method,
+        );
+
+        $request->session()->put('show_cart', 0);
+
+        return $this->sGlobal->view('pos.payment', $data);
     }
 }

@@ -17,7 +17,7 @@ class Customer extends Model
 
     public function updated_user()
     {
-        return $this->belongsTo(Users::class, 'created_by');
+        return $this->belongsTo(Users::class, 'updated_by');
     }
 
     public function getCreatedAtAttribute($date)

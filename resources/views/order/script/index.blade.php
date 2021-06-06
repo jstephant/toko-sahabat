@@ -91,6 +91,15 @@
 					render: function(data, type, row, meta) {
                         return row.total
 					}
+				},{
+					orderable: true,
+					render: function(data, type, row, meta) {
+                        var content = "";
+                        if(row.payment_status_id==1)
+                            content += `<span class="badge badge-md badge-danger text-uppercase">` + row.payment_status.name + `</span>`
+                        else content += `<span class="badge badge-md badge-success text-uppercase">` + row.payment_status.name + `</span>`
+                        return content
+					}
 				},
                 {
 					orderable: true,
@@ -105,30 +114,6 @@
                             content += `<br>`;
                             content += `By <span>` + row.updated_user.name + `</span>`
                         }
-                        return content
-					}
-				},
-                {
-					orderable: true,
-					render: function(data, type, row, meta) {
-                        var content = `<a class="dropdown-item text-success" href="#"
-                                            data-toggle="modal"
-                                            data-target="#modal-payment"
-                                            data-id="` + row.id + `"
-                                            data-link="/order/pay">Bayar
-                                        </a>`
-                        return content
-					}
-				},
-                {
-					orderable: true,
-					render: function(data, type, row, meta) {
-                        var content = `<a class="dropdown-item text-danger" href="#"
-                                            data-toggle="modal"
-                                            data-target="#modal-confirm-cancel"
-                                            data-id="` + row.id + `"
-                                            data-link="/order/cancel">Batal
-                                        </a>`
                         return content
 					}
 				},

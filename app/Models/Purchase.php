@@ -25,9 +25,9 @@ class Purchase extends Model
         return $this->belongsTo(Users::class, 'updated_by');
     }
 
-    public function purchase_product()
+    public function purchase_detail()
     {
-        return $this->hasMany(PurchaseProduct::class, 'purchase_id', 'id');
+        return $this->hasMany(PurchaseDetail::class, 'purchase_id', 'id');
     }
 
     public function transaction_status()

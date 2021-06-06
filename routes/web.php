@@ -122,11 +122,13 @@ Route::prefix('pos')->group(function() {
     Route::get('/get-price-list', [App\Http\Controllers\POSController::class, 'productPriceList'])->name('pos.price-list');
     Route::get('/view-cart', [App\Http\Controllers\POSController::class, 'cartIndex'])->name('pos.cart');
     Route::get('/detail-cart/{id}', [App\Http\Controllers\POSController::class, 'detailCart'])->name('pos.cart.detail');
-    Route::post('/set-satuan', [App\Http\Controllers\POSController::class, 'setSatuan'])->name('pos.cart.set-satuan');
-    Route::post('/set-discount', [App\Http\Controllers\POSController::class, 'setDiscount'])->name('pos.cart.set-discount');
-    Route::post('/set-qty', [App\Http\Controllers\POSController::class, 'setQty'])->name('pos.cart.set-qty');
+    Route::post('/set-satuan', [App\Http\Controllers\POSController::class, 'updateSatuan'])->name('pos.cart.set-satuan');
+    Route::post('/set-discount', [App\Http\Controllers\POSController::class, 'updateDiscount'])->name('pos.cart.set-discount');
+    Route::post('/set-qty', [App\Http\Controllers\POSController::class, 'updateQty'])->name('pos.cart.set-qty');
     Route::post('/remove-item', [App\Http\Controllers\POSController::class, 'removeItem'])->name('pos.cart.remove-item');
-    Route::post('/beli', [App\Http\Controllers\POSController::class, 'doCreateOrder'])->name('pos.beli');
+    Route::post('/beli', [App\Http\Controllers\POSController::class, 'doUpdateCart'])->name('pos.update-cart');
+    Route::get('/bayar/{cart_id}', [App\Http\Controllers\POSController::class, 'paymentIndex'])->name('pos.payment');
+    Route::post('/bayar', [App\Http\Controllers\POSController::class, 'doCreateOrder'])->name('pos.create.order');
 });
 
 Route::get('clear/session/{key}', [App\Http\Controllers\Controller::class, 'clearSession']);
