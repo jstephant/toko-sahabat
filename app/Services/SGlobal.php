@@ -78,7 +78,7 @@ class SGlobal implements IGlobal
         if (isset($data['title'])) {
             $data['title'] = $data['title'];
         } else {
-            $data['title'] = 'Toko Sahabat';
+            $data['title'] = 'Toko Imanuel';
         }
 
         if(env('APP_ENV') == 'production'){
