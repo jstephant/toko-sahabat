@@ -94,7 +94,10 @@ class SOrder implements IOrder
 
     public function findById($id)
     {
-        return $this->orders->where('id', $id)->first();
+        return $this->orders
+                    ->with(['payment_status', 'customer', 'created_user'])
+                    ->where('id', $id)
+                    ->first();
     }
 
     public function createDetail($input)
@@ -141,7 +144,7 @@ class SOrder implements IOrder
         return $data;
     }
 
-    public function deleteDetail($id, $item_id)
+    public function deleteDetail($id, $item_id=null)
     {
         $data = array(
             'status'  => false,
@@ -150,7 +153,9 @@ class SOrder implements IOrder
 
         try {
             DB::beginTransaction();
-            $deleted = OrderDetail::where('order_id', $id)->where('product_id', $item_id)->delete();
+            if($item_id)
+                $deleted = OrderDetail::where('order_id', $id)->where('product_id', $item_id)->delete();
+            else $deleted = OrderDetail::where('order_id', $id)->delete();
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -163,34 +168,14 @@ class SOrder implements IOrder
         return $data;
     }
 
-    public function deleteDetailAll($id)
+    public function findDetailById($id, $item_id = null)
     {
-        $data = array(
-            'status'  => false,
-            'message' => ''
-        );
-
-        try {
-            DB::beginTransaction();
-            $deleted = OrderDetail::where('order_id', $id)->delete();
-            DB::commit();
-            $data['status'] = true;
-            $data['message'] = 'OK';
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::error($e->getMessage());
-            $data['message'] = $e->getMessage();
-        }
-
-        return $data;
+        if($item_id)
+            return $this->orderDetail-with(['product', 'satuan'])->where('order_id', $id)->where('product_id', $item_id)->first();
+        else return $this->orderDetail->with(['product', 'satuan'])->where('order_id', $id)->get();
     }
 
-    public function findDetailById($id)
-    {
-        return $this->orderDetail->with(['product', 'satuan'])->where('order_id', $id)->get();
-    }
-
-    public function listOrder($start_date, $end_date, $status, $keyword, $start, $length, $order)
+    public function listOrder($start_date, $end_date, $staff, $keyword, $start, $length, $order)
     {
         $orders = $this->orders
                           ->with([
@@ -199,14 +184,14 @@ class SOrder implements IOrder
                                 'transaction_status',
                                 'created_user'    => function($q) { $q->select('id', 'name'); },
                                 'updated_user'    => function($q) { $q->select('id', 'name'); },
-                                'order_detail.product.product_sub_category',
+                                'order_detail.product.product_category',
                                 'order_detail.satuan'
                             ])
                           ->whereBetween('order_date', [$start_date, $end_date])
                           ->where('status_id', 2);
-        if($status)
+        if($staff)
         {
-            $orders = $orders->where('payment_status_id', $status);
+            $orders = $orders->where('created_by', $staff);
         }
 
         if($keyword)
@@ -235,18 +220,18 @@ class SOrder implements IOrder
         return $data;
     }
 
-    public function listProduct($sub_category, $keyword, $last_id=null)
+    public function listProduct($category, $keyword, $last_id=null)
     {
         $products = $this->product
                          ->with([
-                                'product_sub_category',
+                                'product_category',
                                 'product_satuan.satuan' => function($q) { $q->orderby('qty', 'asc'); },
                             ])
                          ->where('is_active', true);
 
-        if($sub_category)
+        if($category)
         {
-            $products = $products->where('sub_category_id', $sub_category);
+            $products = $products->where('category_id', $category);
         }
 
         if($keyword)
@@ -275,8 +260,26 @@ class SOrder implements IOrder
         return $this->orders->where('cart_id', $cart_id)->first();
     }
 
-    public function findDetailByIdProduct($order_id, $product_id)
+    public function listDetailProduct($order_id, $start, $length, $order)
     {
-        return $this->orderDetail->where('order_id', $order_id)->where('product_id', $product_id)->first();
+        $order_detail = $this->orderDetail
+                             ->with(['product', 'satuan'])
+                             ->where('order_id', $order_id);
+
+        $count = $order_detail->count();
+
+        if($length!=-1) {
+            $order_detail = $order_detail->offset($start)->limit($length);
+        }
+
+        $order_detail = $order_detail->get();
+
+        $data = [
+            'recordsTotal'    => $count,
+            'recordsFiltered' => $count,
+            'data'	          => $order_detail,
+        ];
+
+        return $data;
     }
 }

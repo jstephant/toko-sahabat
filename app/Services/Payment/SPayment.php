@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Log;
 
 class SPayment implements IPayment
 {
+    private $payment;
     private $paymentStatus;
     private $paymentType;
 
-    public function __construct(PaymentStatus $paymentStatus, PaymentType $paymentType)
+    public function __construct(Payment $payment, PaymentStatus $paymentStatus, PaymentType $paymentType)
     {
+        $this->payment = $payment;
         $this->paymentStatus = $paymentStatus;
         $this->paymentType = $paymentType;
     }
@@ -52,5 +54,13 @@ class SPayment implements IPayment
     public function getPaymentMethod()
     {
         return $this->paymentType->where('is_active', 1)->where('is_default', 1)->first();
+    }
+
+    public function findByOrderId($id)
+    {
+        return $this->payment
+                    ->with(['payment_type', 'payment_status'])
+                    ->where('order_id', $id)
+                    ->first();
     }
 }

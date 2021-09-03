@@ -138,7 +138,7 @@ class SCart implements ICart
         return $data;
     }
 
-    public function deleteDetail($id, $item_id)
+    public function deleteDetail($id, $item_id=null)
     {
         $data = array(
             'status'  => false,
@@ -147,7 +147,9 @@ class SCart implements ICart
 
         try {
             DB::beginTransaction();
-            $deleted = CartDetail::where('cart_id', $id)->where('product_id', $item_id)->delete();
+            if($item_id)
+                $deleted = CartDetail::where('cart_id', $id)->where('product_id', $item_id)->delete();
+            else CartDetail::where('cart_id', $id)->delete();
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -160,46 +162,18 @@ class SCart implements ICart
         return $data;
     }
 
-    public function deleteDetailAll($id)
+    public function findDetailById($id, $item_id = null)
     {
-        $data = array(
-            'status'  => false,
-            'message' => ''
-        );
-
-        try {
-            DB::beginTransaction();
-            $deleted = CartDetail::where('cart_id', $id)->delete();
-            DB::commit();
-            $data['status'] = true;
-            $data['message'] = 'OK';
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::error($e->getMessage());
-            $data['message'] = $e->getMessage();
-        }
-
-        return $data;
-    }
-
-    public function findDetailById($id)
-    {
-        return $this->cartDetail
-                    ->with(['product', 'satuan'])
-                    ->where('cart_id', $id)
-                    ->get();
-    }
-
-    public function findDetailByIdProduct($cart_id, $product_id)
-    {
-        return $this->cartDetail->with('satuan')->where('cart_id', $cart_id)->where('product_id', $product_id)->first();
+        if($item_id)
+            return $this->cartDetail->with(['product', 'satuan'])->where('cart_id', $id)->where('product_id', $item_id)->first();
+        else return $this->cartDetail->with(['product', 'satuan'])->where('cart_id', $id)->get();
     }
 
     public function findPendingByDate($date, $user_id)
     {
         return $this->cart->with([
                                 'customer' => function($q) { $q->select('id', 'name', 'mobile_phone'); },
-                                'cart_detail.product.product_sub_category',
+                                'cart_detail.product.product_category',
                                 'cart_detail.satuan'
                             ])
                           ->where('created_by', $user_id)

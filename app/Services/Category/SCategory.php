@@ -3,7 +3,6 @@
 namespace App\Services\Category;
 
 use App\Models\Category;
-use App\Models\SubCategory;
 use App\Services\Category\ICategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,12 +11,10 @@ use Exception;
 class SCategory implements ICategory
 {
     private $category;
-    private $subCategory;
 
-    public function __construct(Category $category, SubCategory $subCategory)
+    public function __construct(Category $category)
     {
         $this->category = $category;
-        $this->subCategory = $subCategory;
     }
 
     public function create($input)
@@ -145,28 +142,6 @@ class SCategory implements ICategory
             'recordsFiltered' => $count,
             'data'	          => $category->toArray(),
         ];
-
-        return $data;
-    }
-
-    public function deleteSubCategory($category_id)
-    {
-        $data = array(
-            'status'  => false,
-            'message' => ''
-        );
-
-        try {
-            DB::beginTransaction();
-            $sub_category = SubCategory::where('category_id', $category_id)->update(['is_active' => 0]);
-            DB::commit();
-            $data['status'] = true;
-            $data['message'] = 'OK';
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::error($e->getMessage());
-            $data['message'] = $e->getMessage();
-        }
 
         return $data;
     }

@@ -20,9 +20,9 @@
 							<div class="col"></div>
 							<div class="col-lg-3 col-md-4">
 								<div class="form-group mb-3">
-									<select id="sub_category" name="sub_category" class="form-control">
-										<option value="" selected>Select Sub Category</option>
-										@foreach ($sub_category as $item)
+									<select id="category" name="category" class="form-control">
+										<option value="" selected>Select Kategori</option>
+										@foreach ($category as $item)
 											<option value="{{$item->id}}">{{ $item->name }}</option>
 										@endforeach
 									</select>

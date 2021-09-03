@@ -5,9 +5,9 @@
 			defaultDate: new Date(),
         });
 
-        $('#sub_category').select2({
+        $('#category').select2({
             ajax:{
-                url: APP_URL + '/sub-kategori/list-active',
+                url: APP_URL + '/kategori/list-active',
                 type: "GET",
                 dataType: "json",
                 processResults: function(data) {

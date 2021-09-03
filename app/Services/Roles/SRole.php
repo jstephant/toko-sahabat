@@ -2,6 +2,8 @@
 
 namespace App\Services\Roles;
 
+use App\Models\FeatureRole;
+use App\Models\Features;
 use App\Models\Roles;
 use App\Services\Roles\IRole;
 use Illuminate\Support\Facades\DB;
@@ -11,10 +13,14 @@ use Exception;
 class SRole implements IRole
 {
     private $roles;
+    private $features;
+    private $featureRole;
 
-    public function __construct(Roles $roles)
+    public function __construct(Roles $roles, Features $features, FeatureRole $featureRole)
     {
         $this->roles = $roles;
+        $this->features = $features;
+        $this->featureRole = $featureRole;
     }
 
     public function create($input)
@@ -92,6 +98,81 @@ class SRole implements IRole
         return $this->roles->where('id', $id)->first();
     }
 
+    public function createDetail($input)
+    {
+        $data = array(
+            'status'  => false,
+            'message' => ''
+        );
+
+        try {
+            DB::beginTransaction();
+            $created = FeatureRole::create($input);
+            DB::commit();
+            $data['status'] = true;
+            $data['message'] = 'OK';
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage());
+            $data['message'] = $e->getMessage();
+        }
+
+        return $data;
+    }
+
+    public function updateDetail($role_id, $feature_id, $input)
+    {
+        $data = array(
+            'status'  => false,
+            'message' => ''
+        );
+
+        try {
+            DB::beginTransaction();
+            $updated = FeatureRole::where('role_id', $role_id)->where('feature_id', $feature_id)->update($input);
+            DB::commit();
+            $data['status'] = true;
+            $data['message'] = 'OK';
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage());
+            $data['message'] = $e->getMessage();
+        }
+
+        return $data;
+    }
+
+    public function deleteDetail($role_id, $feature_id = null)
+    {
+        $data = array(
+            'status'  => false,
+            'message' => ''
+        );
+
+        try {
+            DB::beginTransaction();
+            if($feature_id)
+                $deleted = FeatureRole::where('role_id', $role_id)->where('feature_id', $feature_id)->delete();
+            else $deleted = FeatureRole::where('role_id', $role_id)->delete();
+            DB::commit();
+            $data['status'] = true;
+            $data['message'] = 'OK';
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage());
+            $data['message'] = $e->getMessage();
+        }
+
+        return $data;
+    }
+
+    public function findDetailById($role_id, $feature_id = null)
+    {
+        if($feature_id)
+            return $this->featureRole->where('role_id', $role_id)->where('feature_id', $feature_id)->first();
+        else return $this->featureRole->where('role_id', $role_id)->get();
+    }
+
     public function getActive($keyword=null)
     {
         $roles = $this->roles->where('is_active', 1);
@@ -143,5 +224,38 @@ class SRole implements IRole
         ];
 
         return $data;
+    }
+
+
+
+    public function listPermission($role_id, $start, $length, $order)
+    {
+        if($length==-1)
+            $result = $this->featureRole->with(['feature' => function($q){ $q->orderby('parent_id', 'asc')->orderby('sequence', 'asc');}])
+                                        ->where('role_id', $role_id);
+
+        $count = $result->count();
+
+        $result = $result->get();
+        $data = array(
+            'recordsTotal'    => $count,
+            'recordsFiltered' => $count,
+            'data'            => $result->toArray()
+        );
+
+        return $data;
+    }
+
+    public function getAll()
+    {
+        return $this->role->get();
+    }
+
+    public function getAllFeatureRoleActive()
+    {
+        $result = $this->featureRole->with(['feature' => function($q){ $q->where('is_active', 1)->orderby('parent_id', 'asc')->orderby('sequence', 'asc');}])
+                                    ->orderby('role_id', 'asc')
+                                    ->get();
+        return $result;
     }
 }

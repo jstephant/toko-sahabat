@@ -1,23 +1,23 @@
 <script>
     $(document).ready(function () {
         $('.money').mask('000.000.000.000', {reverse: true})
-		$('#sub_category').select2()
+		$('#category').select2()
 
-		loadData($('#sub_category').val(), $('#searchactive').val(), $('#last_id').val())
+		loadData($('#category').val(), $('#searchactive').val(), $('#last_id').val())
 
-		$('#sub_category').on('change', function(){
+		$('#category').on('change', function(){
             $('#last_id').val(0)
-            loadData($('#sub_category').val(), $('#searchactive').val(), $('#last_id').val())
+            loadData($('#category').val(), $('#searchactive').val(), $('#last_id').val())
         })
 
 		$('#searchactive').on('input', function(){
             $('#last_id').val(0)
-			loadData($('#sub_category').val(), $('#searchactive').val(), $('#last_id').val())
+			loadData($('#category').val(), $('#searchactive').val(), $('#last_id').val())
 		})
 
 		$('#btn_more').on('click', function(){
             $('#last_id').val(0)
-			loadData($('#sub_category').val(), $('#searchactive').val(), ($('#last_id').val()))
+			loadData($('#category').val(), $('#searchactive').val(), ($('#last_id').val()))
 		})
     })
 
@@ -81,7 +81,7 @@
 			type: "GET",
 			url: APP_URL + '/pos/list-product',
 			data: {
-				sub_category: category,
+				category: category,
 				keyword: keyword,
 				last_id: last_id
 			},

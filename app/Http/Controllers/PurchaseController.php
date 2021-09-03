@@ -188,7 +188,7 @@ class PurchaseController extends Controller
             return redirect()->back()->with('error', $updated['message']);
         }
 
-        $deleted = $this->sPurchase->deleteDetailAll($purchase_id);
+        $deleted = $this->sPurchase->deleteDetail($purchase_id);
         if(!$deleted['status'])
         {
             return redirect()->back()->with('error', $deleted['message']);

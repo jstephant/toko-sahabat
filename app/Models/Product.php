@@ -8,11 +8,11 @@ class Product extends Model
 {
     protected $table = 'products';
     protected $primaryKey = 'id';
-    protected $fillable = ['code', 'name', 'sub_category_id', 'hpp', 'image_name', 'barcode', 'is_active', 'created_by', 'created_at', 'updated_by', 'udpated_at'];
+    protected $fillable = ['code', 'name', 'category_id', 'hpp', 'image_name', 'barcode', 'is_active', 'created_by', 'created_at', 'updated_by', 'udpated_at'];
 
-    public function product_sub_category()
+    public function product_category()
     {
-        return $this->belongsTo(SubCategory::class, 'sub_category_id', 'id');
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
     public function product_satuan()

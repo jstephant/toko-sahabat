@@ -34,4 +34,9 @@ class Roles extends Model
     {
         return ($date) ? date('j F Y H:i', strtotime($date)) : null;
     }
+
+    public function feature_role()
+    {
+        return $this->hasMany(FeatureRole::class, 'feature_id', 'id');
+    }
 }

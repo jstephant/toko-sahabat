@@ -26,7 +26,7 @@ class EditProductRequest extends FormRequest
         return [
             'code'          => 'required',
             'name'          => 'required',
-            'sub_category'  => 'required',
+            'category'      => 'required',
             'satuan'        => 'present|array',
             'hpp'           => 'nullable',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -38,14 +38,14 @@ class EditProductRequest extends FormRequest
     public function messages()
     {
         return [
-            'code.required'         => 'Kode barang harus diisi',
-            'name.required'         => 'Nama barang harus diisi',
-            'sub_category.required' => 'Sub kategori harus diisi',
-            'satuan.present'        => 'Satuan harus diisi',
-            'product_image.mime'    => 'Tipe image salah',
-            'product_image.max'     => 'Ukuran file max: 2MB',
-            'active_at.required'    => 'Tanggal berlaku harus diisi',
-            'price_list.present'    => 'Harga jual barang harus diisi',
+            'code.required'      => 'Kode barang harus diisi',
+            'name.required'      => 'Nama barang harus diisi',
+            'category.required'  => 'Kategori harus diisi',
+            'satuan.present'     => 'Satuan harus diisi',
+            'product_image.mime' => 'Tipe image salah',
+            'product_image.max'  => 'Ukuran file max: 2MB',
+            'active_at.required' => 'Tanggal berlaku harus diisi',
+            'price_list.present' => 'Harga jual barang harus diisi',
         ];
     }
 }

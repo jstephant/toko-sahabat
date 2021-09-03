@@ -35,41 +35,55 @@
 <script>
     $(document).ready(function () {
         $('#modal-set-discount').on('show.bs.modal', function(e){
-            var cart_id = $(e.relatedTarget).data('cart_id');
-            var product_id = $(e.relatedTarget).data('product_id');
-            var sub_total = $(e.relatedTarget).data('sub_total');
-            var disc_pctg = $(e.relatedTarget).data('disc_pctg');
-            var disc_price = $(e.relatedTarget).data('disc_price');
-            $('#cart_id_set_discount').val(cart_id);
-            $('#product_id_set_discount').val(product_id);
-            $('#sub_total_set_discount').val(sub_total);
-            $('#disc_pctg_item').val(disc_pctg);
-            $('#disc_price_item').val(disc_price);
+            var cart_id = $(e.relatedTarget).data('cart_id')
+            var product_id = $(e.relatedTarget).data('product_id')
+            var sub_total = $(e.relatedTarget).data('sub_total')
+            var disc_pctg = $(e.relatedTarget).data('disc_pctg')
+            var disc_price = $(e.relatedTarget).data('disc_price')
+            $('#cart_id_set_discount').val(cart_id)
+            $('#product_id_set_discount').val(product_id)
+            $('#sub_total_set_discount').val(sub_total)
+            $('#disc_pctg_item').val(disc_pctg)
+            $('#disc_pctg_item').attr({'min': 0, 'max': 100})
+            $('#disc_price_item').val(disc_price)
+            $('#disc_price_item').attr({'max': sub_total})
             if(disc_pctg>0)
-                $('#disc_price_item').attr('readonly', true);
-            else $('#disc_price_item').attr('readonly', false);
+                $('#disc_price_item').attr('readonly', true)
+            else $('#disc_price_item').attr('readonly', false)
         })
-    });
+    })
 
     $(document).on('click', '.edit-discount', function(){
         var edit_discount = $(this).closest('.edit-discount').closest('.card')
-        $(edit_discount).addClass('selected-item');
-    });
+        $(edit_discount).addClass('selected-item')
+    })
 
     $(document).on('change', '#disc_pctg_item', function () {
-        var sub_total = $('#sub_total_set_discount').val();
+        var sub_total = $('#sub_total_set_discount').val()
 
-        var disc_pctg = $('#disc_pctg_item').val();
+        var value = $('#disc_pctg_item').val()
+        var max = $('#disc_pctg_item').attr('max')
+        if( parseInt(value) > parseInt(max))
+            $('#disc_pctg_item').val(max)
+
+        var disc_pctg = $('#disc_pctg_item').val()
         if(disc_pctg>0)
-            $('#disc_price_item').attr('readonly', true);
-        else $('#disc_price_item').attr('readonly', false);
+            $('#disc_price_item').attr('readonly', true)
+        else $('#disc_price_item').attr('readonly', false)
 
-        var disc_rp = hitungDiscPctg(sub_total, disc_pctg);
-        $('#disc_price_item').val(disc_rp);
-    });
+        var disc_rp = hitungDiscPctg(sub_total, disc_pctg)
+        $('#disc_price_item').val(disc_rp)
+    })
+
+    $(document).on('change', '#disc_price_item', function () {
+        var value = $('#disc_price_item').val()
+        var max = $('#disc_price_item').attr('max')
+        if( parseInt(value) > parseInt(max))
+            $('#disc_price_item').val(max)
+    })
 
     $(document).on('click', '#btn_set_discount', function() {
-        var _token = $('meta[name="csrf-token"]').attr('content');
+        var _token = $('meta[name="csrf-token"]').attr('content')
         $.ajax({
             type: "POST",
             url: APP_URL + '/pos/set-discount',
@@ -84,8 +98,8 @@
             success: function (response) {
                 if(response.detail)
                 {
-                    var content_disc_pctg = ``;
-                    var content_disc_price = ``;
+                    var content_disc_pctg = ``
+                    var content_disc_price = ``
                     if(response.detail.disc_pctg>0)
                     {
                         content_disc_pctg += `<span class="badge badge-sm badge-danger mr-2">` + response.detail.disc_pctg + `%</span>`
@@ -93,27 +107,32 @@
 
                     if(response.detail.disc_price>0)
                     {
-                        content_disc_price += `<small><del>Rp` + response.detail.text_disc_price + `</del></small>`;
+                        content_disc_price += `<small><del>Rp` + response.detail.text_disc_price + `</del></small>`
                     }
 
-                    var content_discount = content_disc_pctg + content_disc_price;
+                    var content_discount = content_disc_pctg + content_disc_price
                     if(!content_discount)
                     {
-                        content_discount = `<small><del>Discount</del></small>`;
+                        content_discount = `<small class="text-danger"><del>Discount</del></small>`
                     }
-                    $('#total_view').text(response.header.text_total);
-                    var selected_item = $(document).find('.selected-item');
-                    selected_item.find('.edit-discount').data('sub_total', response.detail.sub_total);
-                    selected_item.find('.edit-discount').data('disc_pctg', response.detail.disc_pctg);
-                    selected_item.find('.edit-discount').data('disc_price', response.detail.disc_price);
-                    selected_item.find('.discount-text').html(content_discount);
-                    selected_item.find('.item-total-text').text(response.detail.text_total);
-                    $(selected_item).removeClass('selected-item');
+                    $('#total_view').text(response.header.text_total)
+                    var selected_item = $(document).find('.selected-item')
+                    selected_item.find('.edit-discount').data('sub_total', response.detail.sub_total)
+                    selected_item.find('.edit-discount').data('disc_pctg', response.detail.disc_pctg)
+                    selected_item.find('.edit-discount').data('disc_price', response.detail.disc_price)
+                    selected_item.find('.discount-text').html(content_discount)
+                    selected_item.find('.item-total-text').text(response.detail.text_total)
+                    $(selected_item).removeClass('selected-item')
+
+                    $('#payment_sub_total').text(response.header.text_sub_total)
+                    $('#payment_disc_price').text(response.header.text_disc_price)
+                    $('#payment_total').text(response.header.text_total)
+                    $('#total_pay').val(response.header.total)
                 }
             }
-        });
+        })
 
-        $('#modal-set-discount').modal('hide');
-    });
+        $('#modal-set-discount').modal('hide')
+    })
 </script>
 
