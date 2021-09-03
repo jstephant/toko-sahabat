@@ -37,14 +37,14 @@
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                 <div class="form-group">
-                                                    <label for="sub_category" class="col-form-label-sm text-uppercase display-4">Sub Kategori *</label>
-                                                    <select id="sub_category" name="sub_category" class="form-control @error('sub_category') 'is-invalid @enderror" required>
+                                                    <label for="category" class="col-form-label-sm text-uppercase display-4">Kategori *</label>
+                                                    <select id="category" name="category" class="form-control @error('category') 'is-invalid @enderror" required>
                                                         <option value=""></option>
-                                                        @foreach ($sub_category as $item)
+                                                        @foreach ($category as $item)
                                                             <option value="{{ $item->id }}" {{ ($item->id==$product->sub_category_id) ? 'selected' : '' }}>{{ $item->name }}</option>
                                                         @endforeach
                                                     </select>
-                                                    @error('sub_category')
+                                                    @error('category')
                                                         <div class="alert alert-danger p-2 mt-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>

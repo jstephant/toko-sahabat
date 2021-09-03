@@ -33,20 +33,10 @@
                             </div>
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <label for="payment_status" class="col-form-label-sm text-uppercase display-4">Status Bayar</label>
-                                    <select id="payment_status" name="payment_status" class="form-control">
-                                        @foreach ($payment_status as $item)
-											<option value="{{ $item->id }}">{{$item->name}}
-										@endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="form-group">
-                                    <label for="customer" class="col-form-label-sm text-uppercase display-4">Customer</label>
-                                    <select id="customer" name="customer" class="form-control">
+                                    <label for="staff" class="col-form-label-sm text-uppercase display-4">Staff</label>
+                                    <select id="staff" name="staff" class="form-control">
                                         <option value=""></option>
-                                        @foreach ($customer as $item)
+                                        @foreach ($users as $item)
 											<option value="{{ $item->id }}">{{$item->name}}
 										@endforeach
                                     </select>
@@ -62,12 +52,11 @@
 												<th scope="col">No. Order</th>
 												<th scope="col">Tgl. Order</th>
                                                 <th scope="col">Customer</th>
-                                                <th scope="col">No. Telp</th>
 												<th scope="col">Sub Total</th>
 												<th scope="col">Discount</th>
                                                 <th scope="col">Total</th>
                                                 <th scope="col">Status Bayar</th>
-												<th scope="col">Tgl. Update</th>
+												<th scope="col">Staff</th>
 												<th scope="col"></th>
 											</tr>
 										</thead>
@@ -82,4 +71,6 @@
 	</div>
     @include('order.script.index')
     @include('confirmation.cancel')
+    @include('order.modal.detail')
+    @include('order.script.detail')
 @endsection

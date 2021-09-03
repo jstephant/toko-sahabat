@@ -14,12 +14,11 @@
 			maxDate: new Date(),
         });
 
-        $('#customer').select2();
-        $('#payment_status').select2({
+        $('#staff').select2({
 			minimumResultsForSearch: -1,
 		});
 
-        var purchase_table = $('#order_table').DataTable( {
+        var order_table = $('#order_table').DataTable( {
 			processing: true,
             serverSide: true,
             responsive: false,
@@ -30,7 +29,7 @@
 				data: function(d) {
                     d.start_date = $('#start_date').val();
                     d.end_date = $('#end_date').val();
-                    d.status = $('#status').val();
+                    d.staff = $('#staff').val();
 					d.keyword = $('#searchactive').val();
 				}
 			},
@@ -59,19 +58,13 @@
 				{
 					orderable: true,
 					render: function(data, type, row, meta) {
-						return row.order_date;
+						return row.created_at;
 					}
 				},
 				{
 					orderable: true,
 					render: function(data, type, row, meta) {
                         return row.customer.name;
-					}
-				},
-                {
-					orderable: true,
-					render: function(data, type, row, meta) {
-                        return row.customer.mobile_phone;
 					}
 				},
                 {
@@ -96,25 +89,36 @@
 					render: function(data, type, row, meta) {
                         var content = "";
                         if(row.payment_status_id==1)
-                            content += `<span class="badge badge-md badge-danger text-uppercase">` + row.payment_status.name + `</span>`
-                        else content += `<span class="badge badge-md badge-success text-uppercase">` + row.payment_status.name + `</span>`
+                            content += `<span class="badge badge-default">Belum Lunas</span>`
+                        else content += `<span class="badge badge-default">Lunas</span>`
                         return content
 					}
 				},
                 {
 					orderable: true,
 					render: function(data, type, row, meta) {
-                        var content = '';
-                        if(row.updated_by==null){
-                            content += row.created_at;
-                            content += `<br>`;
-                            content += `By <span>` + row.created_user.name + `</span>`
-                        } else {
-                            content += row.updated_at;
-                            content += `<br>`;
-                            content += `By <span>` + row.updated_user.name + `</span>`
-                        }
+                        var content = `<span>` + row.created_user.name + `</span>`
                         return content
+					}
+				},
+                {
+					orderable: false,
+					render: function(data, type, row, meta) {
+						var content = `
+							<ul class="navbar-nav ml-lg-auto">
+								<li class="nav-item dropdown">
+									<a class="text-gray" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
+									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-primary_dropdown_1">
+                                        <a class="dropdown-item" href="#"
+                                            data-toggle="modal"
+                                            data-target="#modal-detail"
+                                            data-id="` + row.id + `">Detail
+                                        </a>
+									</div>
+								</li>
+							</ul>
+						`;
+						return content;
 					}
 				},
             ],
@@ -126,7 +130,7 @@
             order_table.ajax.reload()
         });
 
-        $('#start_date, #end_date, #customer').on('change', function(){
+        $('#start_date, #end_date, #staff').on('change', function(){
             order_table.ajax.reload();
         });
     });

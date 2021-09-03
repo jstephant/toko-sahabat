@@ -4,32 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\CreateProductRequest;
 use App\Http\Requests\Product\EditProductRequest;
+use App\Services\Category\SCategory;
 use App\Services\PriceList\SPriceList;
 use App\Services\Product\SProduct;
 use App\Services\Satuan\SSatuan;
 use App\Services\SGlobal;
-use App\Services\SubCategory\SSubCategory;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     private $sGlobal;
     private $sProduct;
-    private $sSubCategory;
+    private $sCategory;
     private $sSatuan;
     private $sPriceList;
 
     public function __construct(
         SGlobal $sGlobal,
         SProduct $sProduct,
-        SSubCategory $sSubCategory,
+        SCategory $sCategory,
         SSatuan $sSatuan,
         SPriceList $sPriceList
     )
     {
         $this->sGlobal = $sGlobal;
         $this->sProduct = $sProduct;
-        $this->sSubCategory = $sSubCategory;
+        $this->sCategory = $sCategory;
         $this->sSatuan = $sSatuan;
         $this->sPriceList = $sPriceList;
     }
@@ -55,14 +55,14 @@ class ProductController extends Controller
     public function create()
     {
         $code = $this->sGlobal->generateCode('code', 'product', 'code', 8);
-        $sub_category = $this->sSubCategory->getActive();
+        $category = $this->sCategory->getActive();
         $satuan = $this->sSatuan->getActive();
         $data = array(
             'title'        => 'Barang',
             'active_menu'  => 'Barang',
             'edit_mode'    => 1,
             'code'         => $code,
-            'sub_category' => $sub_category,
+            'category'     => $category,
             'satuan'       => $satuan,
         );
 
@@ -75,7 +75,7 @@ class ProductController extends Controller
 
         $code = $request->code;
         $name = $request->name;
-        $sub_category = $request->sub_category;
+        $category = $request->category;
         $hpp = $request->hpp;
         $barcode = $request->barcode;
         $satuan = $request->satuan;
@@ -90,13 +90,13 @@ class ProductController extends Controller
         }
 
         $input = array(
-            'code'            => $code,
-            'name'            => $name,
-            'sub_category_id' => $sub_category,
-            'hpp'             => $hpp,
-            'barcode'         => $barcode,
-            'image_name'      => $image_name,
-            'created_by'      => $created_by
+            'name'        => $name,
+            'code'        => $code,
+            'category_id' => $category,
+            'hpp'         => $hpp,
+            'barcode'     => $barcode,
+            'image_name'  => $image_name,
+            'created_by'  => $created_by
         );
 
         $created = $this->sProduct->create($input);
@@ -129,18 +129,18 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = $this->sProduct->findById($id);
-        $sub_category = $this->sSubCategory->getActive();
+        $category = $this->sCategory->getActive();
         $satuan = $this->sSatuan->getActive();
         $price_list = $this->sPriceList->findItemByDate($id);
 
         $data = array(
-            'title'        => 'Barang',
-            'active_menu'  => 'Barang',
-            'edit_mode'    => 1,
-            'product'      => $product,
-            'sub_category' => $sub_category,
-            'satuan'       => $satuan,
-            'price_list'   => $price_list,
+            'title'       => 'Barang',
+            'active_menu' => 'Barang',
+            'edit_mode'   => 1,
+            'product'     => $product,
+            'category'    => $category,
+            'satuan'      => $satuan,
+            'price_list'  => $price_list,
         );
 
         return $this->sGlobal->view('product.edit', $data);
@@ -152,7 +152,7 @@ class ProductController extends Controller
 
         $product_id = $request->product_id;
         $name = $request->name;
-        $sub_category = $request->sub_category;
+        $category = $request->category;
         $hpp = $request->hpp;
         $satuan = $request->satuan;
         $status = $request->status;
@@ -167,13 +167,13 @@ class ProductController extends Controller
         }
 
         $input = array(
-            'name'            => $name,
-            'sub_category_id' => $sub_category,
-            'hpp'             => $hpp,
-            'image_name'      => $image_name,
-            'is_active'       => $status,
-            'updated_by'      => $user_id,
-            'updated_at'      => date('Y-m-d H:i:s')
+            'name'        => $name,
+            'category_id' => $category,
+            'hpp'         => $hpp,
+            'image_name'  => $image_name,
+            'is_active'   => $status,
+            'updated_by'  => $user_id,
+            'updated_at'  => date('Y-m-d H:i:s')
         );
 
         $updated = $this->sProduct->update($product_id, $input);

@@ -90,7 +90,7 @@
                     var content_discount = content_disc_pctg + content_disc_price;
                     if(!content_discount)
                     {
-                        content_discount = `<small><del>Discount</del></small>`;
+                        content_discount = `<small class="text-danger"><del>Discount</del></small>`;
                     }
 
                     $('#total_view').text(response.header.text_total);
@@ -109,6 +109,11 @@
 
                     selected_item.find('.text-stock').text('Tersedia: ' + response.detail.stock);
                     $(selected_item).removeClass('selected-item');
+
+                    $('#payment_sub_total').text(response.header.text_sub_total);
+                    $('#payment_disc_price').text(response.header.text_disc_price);
+                    $('#payment_total').text(response.header.text_total);
+                    $('#total_pay').val(response.header.total);
                 }
             }
         });

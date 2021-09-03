@@ -59,6 +59,11 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <a href="#" id="btn_detail_beli" name="btn_detail_beli" class="btn btn-facebook btn-block" data-toggle="modal" data-target="#modal-detail-item">Input Detail Pembelian</a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
                                     <div class="row">
@@ -132,6 +137,7 @@
         </div>
     </div>
     @include('purchase.script.create')
-    @include('product.modal.item-transaction')
-    @include('product.script.item-transaction')
+    @include('purchase.modal.detail')
+    {{-- @include('product.modal.item-transaction')
+    @include('product.script.item-transaction') --}}
 @endsection

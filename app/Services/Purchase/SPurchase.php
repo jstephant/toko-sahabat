@@ -171,7 +171,7 @@ class SPurchase implements IPurchase
         return $data;
     }
 
-    public function deleteDetail($id, $item_id)
+    public function deleteDetail($id, $item_id=null)
     {
         $data = array(
             'status'  => false,
@@ -180,7 +180,9 @@ class SPurchase implements IPurchase
 
         try {
             DB::beginTransaction();
-            $deleted = PurchaseDetail::where('purchase_id', $id)->where('product_id', $item_id)->delete();
+            if($item_id)
+                $deleted = PurchaseDetail::where('purchase_id', $id)->where('product_id', $item_id)->delete();
+            else $deleted = PurchaseDetail::where('purchase_id', $id)->delete();
             DB::commit();
             $data['status'] = true;
             $data['message'] = 'OK';
@@ -193,30 +195,17 @@ class SPurchase implements IPurchase
         return $data;
     }
 
-    public function deleteDetailAll($id)
+    public function findDetailById($id, $item_id=null)
     {
-        $data = array(
-            'status'  => false,
-            'message' => ''
-        );
-
-        try {
-            DB::beginTransaction();
-            $deleted = PurchaseDetail::where('purchase_id', $id)->delete();
-            DB::commit();
-            $data['status'] = true;
-            $data['message'] = 'OK';
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::error($e->getMessage());
-            $data['message'] = $e->getMessage();
+        if($item_id)
+        {
+            return $this->purchaseDetail
+                    ->with(['product', 'satuan'])
+                    ->where('purchase_id', $id)
+                    ->where('product_id', $item_id)
+                    ->first();
         }
 
-        return $data;
-    }
-
-    public function findDetailById($id)
-    {
         return $this->purchaseDetail
                     ->with(['product', 'satuan'])
                     ->where('purchase_id', $id)

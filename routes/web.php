@@ -55,14 +55,6 @@ Route::prefix('kategori')->group(function () {
     Route::post('/delete/{id}', [App\Http\Controllers\CategoryController::class, 'doDelete'])->name('category.delete.post');
 });
 
-Route::prefix('sub-kategori')->group(function () {
-    Route::get('/', [App\Http\Controllers\SubCategoryController::class, 'index'])->name('subcategory.index');
-    Route::post('/save', [App\Http\Controllers\SubCategoryController::class, 'doSave'])->name('subcategory.save.post');
-    Route::get('/list', [App\Http\Controllers\SubCategoryController::class, 'listSubCategory'])->name('subcategory.list');
-    Route::post('/delete/{id}', [App\Http\Controllers\SubCategoryController::class, 'doDelete'])->name('subcategory.delete.post');
-    Route::get('/list-active', [App\Http\Controllers\SubCategoryController::class, 'listActive'])->name('subcategory.list.active');
-});
-
 Route::prefix('barang')->group(function () {
     Route::get('/', [App\Http\Controllers\ProductController::class, 'index'])->name('product.index');
     Route::get('/create', [App\Http\Controllers\ProductController::class, 'create'])->name('product.create');
@@ -111,6 +103,7 @@ Route::prefix('beli')->group(function () {
 Route::prefix('order')->group(function () {
     Route::get('/', [App\Http\Controllers\OrderController::class, 'index'])->name('order.index');
     Route::get('/list', [App\Http\Controllers\OrderController::class, 'listOrder'])->name('order.list');
+    Route::get('/detail/{id}', [App\Http\Controllers\OrderController::class, 'detail'])->name('order.detail');
     Route::get('/list-detail/{id}', [App\Http\Controllers\OrderController::class, 'listDetail'])->name('order.list.detail');
     Route::post('/cancel/{id}', [App\Http\Controllers\OrderControler::class, 'doCancel'])->name('order.cancel.post');
 });

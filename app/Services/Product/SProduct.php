@@ -13,13 +13,11 @@ use Exception;
 class SProduct implements IProduct
 {
     private $product;
-    private $productSubCategory;
     private $productSatuan;
 
-    public function __construct(Product $product, ProductSubCategory $productSubCategory, ProductSatuan $productSatuan)
+    public function __construct(Product $product, ProductSatuan $productSatuan)
     {
         $this->product = $product;
-        $this->productSubCategory = $productSubCategory;
         $this->productSatuan = $productSatuan;
     }
 
@@ -95,14 +93,14 @@ class SProduct implements IProduct
 
     public function findById($id)
     {
-        $product = $this->product->with(['product_sub_category.category', 'product_satuan.satuan'])->where('id', $id)->first();
+        $product = $this->product->with(['product_category', 'product_satuan.satuan'])->where('id', $id)->first();
         $product->image_url = ($product->image_name) ? url('images/product/'. $product->image_name) : url('images/product/default.png');
         return $product;
     }
 
     public function getActive($keyword=null)
     {
-        $products = $this->product->with(['product_sub_category.category', 'product_satuan.satuan']);
+        $products = $this->product->with(['product_category', 'product_satuan.satuan']);
         if($keyword)
         {
             $products = $products->where('code', 'like', '%'.$keyword.'%')
@@ -114,13 +112,13 @@ class SProduct implements IProduct
 
     public function listProduct($keyword, $start, $length, $order)
     {
-        $products = $this->product->with(['product_sub_category.category', 'product_satuan.satuan', 'created_user', 'updated_user']);
+        $products = $this->product->with(['product_category', 'product_satuan.satuan', 'created_user', 'updated_user']);
 
         if($keyword)
         {
             $products = $products->where('code', 'like', '%'.$keyword.'%')
                                  ->orwhere('name', 'like', '%'.$keyword.'%')
-                                 ->orWhereHas('product_sub_category.category', function($q) use($keyword){ $q->where('name', 'like', ''.$keyword.''); })
+                                 ->orWhereHas('product_category', function($q) use($keyword){ $q->where('name', 'like', ''.$keyword.''); })
                                  ->orWhereHas('product_satuan.satuan', function($q) use($keyword) {
                                         $q->where('name', 'like', '%'.$keyword.'%')
                                           ->orwhere('code', 'like', '%'.$keyword.'%');

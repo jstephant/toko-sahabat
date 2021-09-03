@@ -9,7 +9,7 @@
             minimumResultsForSearch: -1
         });
 
-        $('#sub_category, #satuan').select2();
+        $('#category, #satuan').select2();
 
         $('#satuan').on('select2:select', function (e) {
             var data = e.params.data;

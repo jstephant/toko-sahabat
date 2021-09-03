@@ -38,7 +38,7 @@
 						content += `<div class="media-body">`
 						content += `<span class="text-sm mb-0 ml-2">` + row.code + `</span><br>`
                         content += `<span class="h5 mb-0 ml-2 text-uppercase">` + row.name + `</span><br>`
-                        content += `<span class="mb-0 ml-2 badge badge-pill badge-md badge-primary">` + row.product_sub_category.name + `</span>`
+                        content += `<span class="mb-0 ml-2 badge badge-pill badge-md badge-primary">` + row.product_category.name + `</span>`
 						content += `</div>`;
 						content += `</div>`;
                         return content;

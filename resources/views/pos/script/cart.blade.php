@@ -11,7 +11,6 @@
             dataType: "json",
             success: function (response) {
                 $('#total_view').text(response.header.text_total)
-                $('#btn_save').text('Beli (' + Object.keys(response.detail).length + ')')
                 $('#detail_product').append(response.content)
             }
         })
@@ -104,9 +103,12 @@
                 if(response.header)
                 {
                     $('#total_view').text(response.header.text_total)
-                    $('#btn_save').text('Beli (' + response.total_item + ')')
+                    $('#payment_sub_total').text(response.header.text_sub_total)
+                    $('#payment_disc_price').text(response.header.text_disc_price)
+                    $('#payment_total').text(response.header.text_total)
+                    $('#total_pay').val(response.header.total)
                 }
-                selected_item.remove();
+                selected_item.remove()
                 if(response.total_item==0) location.reload()
             },
         })
@@ -139,13 +141,13 @@
 
                     if(response.detail.disc_price>0)
                     {
-                        content_disc_price += `<small class="money"><del>Rp` + response.detail.text_disc_price + `</del></small>`
+                        content_disc_price += `<small><del>Rp` + response.detail.text_disc_price + `</del></small>`
                     }
 
                     var content_discount = content_disc_pctg + content_disc_price
                     if(!content_discount)
                     {
-                        content_discount = `<small><del>Discount</del></small>`
+                        content_discount = `<small class="text-danger"><del>Discount</del></small>`
                     }
                     var selected_item = $(document).find('.selected-item')
                     selected_item.find('.edit-discount').data('sub_total', response.detail.sub_total)
@@ -182,6 +184,11 @@
 
                     $(selected_item).removeClass('selected-item')
                     $('.money').mask('#.##0', {reverse: true})
+
+                    $('#payment_sub_total').text(response.header.text_sub_total)
+                    $('#payment_disc_price').text(response.header.text_disc_price)
+                    $('#payment_total').text(response.header.text_total)
+                    $('#total_pay').val(response.header.total)
                 }
             }
         })
